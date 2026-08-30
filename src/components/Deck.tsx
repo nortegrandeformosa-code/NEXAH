@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { engine } from "../audio";
-import { CHART, TICKER, currentShow, pad2 } from "../data";
+import { CHART, IMG, TICKER, currentShow, pad2 } from "../data";
 import { useClock, useInView, useScramble } from "../hooks";
+import { CyberImg } from "./Img";
 import { IconLogo, IconPlay, IconSignal } from "./Icons";
 import { Visualizer } from "./Player";
 
@@ -93,7 +94,7 @@ export function Header() {
   );
 }
 
-/* ================= consola de apertura ================= */
+/* ================= consola de apertura — full bleed ================= */
 export function Hero() {
   const { out, done } = useScramble("NEXAH", 250);
   const sub = useInView<HTMLDivElement>(0.1);
@@ -111,24 +112,24 @@ export function Hero() {
   };
 
   return (
-    <section id="top" className="relative overflow-hidden pt-16">
-      {/* capas de fondo */}
-      <div className="bg-grid bg-grid-fade absolute inset-0" aria-hidden="true" />
-      <div
-        className="absolute -top-40 right-[-10%] h-[560px] w-[560px] rounded-full opacity-25 blur-3xl"
-        style={{ background: "radial-gradient(circle, #00e8ff 0%, transparent 65%)" }}
-        aria-hidden="true"
-      />
-      <div
-        className="absolute bottom-[-20%] left-[-8%] h-[480px] w-[480px] rounded-full opacity-20 blur-3xl"
-        style={{ background: "radial-gradient(circle, #ff2e7e 0%, transparent 65%)" }}
-        aria-hidden="true"
-      />
-      <div className="pointer-events-none absolute right-2 top-28 hidden select-none font-display text-[11rem] font-black leading-none text-stroke opacity-[0.06] xl:block" aria-hidden="true">
-        108.0
+    <section id="top" className="relative flex min-h-svh flex-col overflow-hidden pt-16">
+      {/* fondo: la cabina en movimiento */}
+      <div className="absolute inset-0" aria-hidden="true">
+        <CyberImg src={IMG.hero} kb eager className="absolute inset-0" />
+        <div className="img-veil absolute inset-0" />
+        <div className="img-veil-b absolute inset-0" />
+        <div className="bg-grid bg-grid-fade absolute inset-0 opacity-70" />
+        <div
+          className="absolute -top-40 right-[-10%] h-[560px] w-[560px] rounded-full opacity-20 blur-3xl"
+          style={{ background: "radial-gradient(circle, #00e8ff 0%, transparent 65%)" }}
+        />
+        <div
+          className="absolute bottom-[-18%] left-[-8%] h-[480px] w-[480px] rounded-full opacity-15 blur-3xl"
+          style={{ background: "radial-gradient(circle, #ff2e7e 0%, transparent 65%)" }}
+        />
       </div>
 
-      <div className="relative mx-auto grid max-w-[1440px] gap-12 px-4 pb-16 pt-14 md:px-8 lg:grid-cols-12 lg:gap-8 lg:pt-20">
+      <div className="relative mx-auto grid w-full max-w-[1440px] flex-1 gap-12 px-4 pb-14 pt-12 md:px-8 lg:grid-cols-12 lg:gap-8 lg:pt-20">
         {/* columna editorial */}
         <div className="lg:col-span-7">
           <p className="flex items-center gap-3 font-mono text-[11px] tracking-[0.3em] text-neon">
@@ -146,10 +147,10 @@ export function Hero() {
           </h1>
 
           <div className="mt-5 flex flex-wrap items-center gap-3">
-            <span className="border border-neon/50 px-2 py-1 font-mono text-[11px] tracking-[0.25em] text-neon">
+            <span className="border border-neon/50 bg-ink/50 px-2 py-1 font-mono text-[11px] tracking-[0.25em] text-neon backdrop-blur-sm">
               108.0 · FRECUENCIA DIGITAL
             </span>
-            <span className="border border-line px-2 py-1 font-mono text-[11px] tracking-[0.25em] text-mut">
+            <span className="border border-line bg-ink/50 px-2 py-1 font-mono text-[11px] tracking-[0.25em] text-mut backdrop-blur-sm">
               SEÑAL 100% AUTÓNOMA
             </span>
           </div>
@@ -175,14 +176,13 @@ export function Hero() {
             </button>
             <a
               href="#proyecto"
-              className="notch border border-line2 px-7 py-4 font-display text-sm font-bold tracking-[0.2em] text-snow transition-colors duration-300 hover:border-neon hover:text-neon"
+              className="notch border border-line2 bg-ink/40 px-7 py-4 font-display text-sm font-bold tracking-[0.2em] text-snow backdrop-blur-sm transition-colors duration-300 hover:border-neon hover:text-neon"
             >
               LEER EL MANIFIESTO ↓
             </a>
           </div>
 
-          {/* lecturas rápidas */}
-          <div className="mt-12 grid max-w-xl grid-cols-3 divide-x divide-line border border-line">
+          <div className="mt-12 grid max-w-xl grid-cols-3 divide-x divide-line border border-line bg-ink/55 backdrop-blur-sm">
             {[
               ["99.98%", "UPTIME"],
               ["<40 MS", "LATENCIA"],
@@ -205,7 +205,7 @@ export function Hero() {
             <div className="ring-pulse absolute h-[340px] w-[340px] rounded-full border border-neon/25" />
           </div>
 
-          <div className="notch relative border border-line bg-panel/85 backdrop-blur-sm">
+          <div className="notch relative border border-line bg-panel/75 backdrop-blur-md">
             <div className="flex items-center justify-between border-b border-line px-5 py-3">
               <span className="flex items-center gap-2 font-mono text-[10px] tracking-[0.3em] text-mut">
                 <IconSignal className="h-3.5 w-3.5 text-neon" /> SIGNAL FEED
@@ -236,10 +236,9 @@ export function Hero() {
               ))}
             </div>
 
-            {/* sonando ahora */}
             <div className="space-y-3 p-5">
               <p className="font-mono text-[10px] tracking-[0.3em] text-mut">SONANDO AHORA</p>
-              <div className="flex items-center gap-3 border border-line bg-raise px-4 py-3">
+              <div className="flex items-center gap-3 border border-line bg-raise/80 px-4 py-3">
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center border border-neon/40 font-display text-lg font-black text-neon">
                   {st.track.pos}
                 </span>
@@ -272,7 +271,9 @@ export function Hero() {
         </div>
       </div>
 
-      <Ticker />
+      <div className="relative">
+        <Ticker />
+      </div>
     </section>
   );
 }
@@ -281,7 +282,7 @@ export function Hero() {
 export function Ticker({ reverse = false }: { reverse?: boolean }) {
   const items = [...TICKER, ...TICKER];
   return (
-    <div className="relative overflow-hidden border-y border-line bg-abyss py-3">
+    <div className="relative overflow-hidden border-y border-line bg-abyss/95 py-3 backdrop-blur-sm">
       <div className={`ticker-track ${reverse ? "ticker-reverse" : ""}`}>
         {items.map((t, i) => (
           <span key={i} className="flex shrink-0 items-center gap-6 pr-6 font-mono text-[11px] tracking-[0.25em] text-mut">

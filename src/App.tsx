@@ -1,7 +1,8 @@
 import { Header, Hero } from "./components/Deck";
 import { PlayerBar } from "./components/Player";
 import { Agentes, Cadena, Manifiesto } from "./components/Sections";
-import { Feed, Footer, Musica, Parrilla, Partners, TerminalLog } from "./components/Sections2";
+import { Feed, Footer, Musica, Partners, TerminalLog } from "./components/Sections2";
+import { Cabina, Parrilla, Torre } from "./components/Visual";
 
 export default function App() {
   return (
@@ -14,8 +15,10 @@ export default function App() {
       <main>
         <Hero />
         <Manifiesto />
+        <Torre />
         <Agentes />
         <Cadena />
+        <Cabina />
         <Parrilla />
         <Musica />
         <Feed />

@@ -11,6 +11,29 @@ export const ACCENT_HEX: Record<Accent, string> = {
   amber: "#ffb02e",
 };
 
+/* ---------- imágenes de la señal ---------- */
+const GEN = "https://image.qwenlm.ai/generated-images";
+
+export const IMG = {
+  hero: `${GEN}/f142f20d-3b79-4a98-9953-abdf7710a05a/_result.png`,
+  mic: `${GEN}/0e4316f2-00f6-450d-9a00-7e28f35c89fb/_result.png`,
+  night: `${GEN}/4dc2ec60-a84d-440d-bdfd-0efb231f1063/_result.png`,
+  rock: `${GEN}/0a4b5a2c-8d55-4716-8059-222527fed20a/_result.png`,
+  tech: `${GEN}/57cc0c1b-090d-4c4e-bad6-f0847e9fe252/_result.png`,
+  live: `${GEN}/1bb0bd5b-ddf5-4b63-9f7a-c235198470b6/_result.png`,
+  tower: `${GEN}/2ec68e7a-638a-46f5-b3a4-bb56b5f9d7e2/_result.png`,
+  console: `${GEN}/5758eb38-96a3-4a52-9af6-d9dd4c21d606/_result.png`,
+  cabin: `${GEN}/b48a8867-3edb-406d-a767-06cc890f3747/_result.png`,
+};
+
+export const SHOW_IMG: Record<string, string> = {
+  "NX-01": IMG.mic,
+  "NX-04": IMG.tech,
+  LIVE: IMG.live,
+  "NX-03": IMG.rock,
+  "NX-02": IMG.night,
+};
+
 /* ---------- ticker ---------- */
 export const TICKER = [
   "PRIMERA RADIO 100% OPERADA POR AGENTES DE IA",

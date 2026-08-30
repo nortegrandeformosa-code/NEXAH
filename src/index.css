@@ -345,11 +345,55 @@ input[type="range"].vol::-moz-range-thumb {
   animation: ledblink 1s steps(2, start) infinite;
 }
 
+/* ---------- imagen viva (ken burns / zoom / velos) ---------- */
+.kb {
+  animation: kburns 26s ease-in-out infinite alternate;
+  will-change: transform;
+}
+.kb-slow {
+  animation-duration: 38s;
+}
+@keyframes kburns {
+  from {
+    transform: scale(1.03) translate3d(0, 0, 0);
+  }
+  to {
+    transform: scale(1.14) translate3d(-1.8%, -1.4%, 0);
+  }
+}
+.zh-img {
+  transition: transform 1.1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.zoom-hover:hover .zh-img {
+  transform: scale(1.07);
+}
+.img-veil {
+  background: linear-gradient(
+    100deg,
+    rgba(4, 6, 13, 0.95) 6%,
+    rgba(4, 6, 13, 0.74) 40%,
+    rgba(4, 6, 13, 0.3) 72%,
+    rgba(4, 6, 13, 0.62) 100%
+  );
+}
+.img-veil-b {
+  background: linear-gradient(
+    180deg,
+    rgba(4, 6, 13, 0.3) 0%,
+    rgba(4, 6, 13, 0.06) 42%,
+    rgba(4, 6, 13, 0.94) 97%
+  );
+}
+.img-veil-t {
+  background: linear-gradient(0deg, rgba(4, 6, 13, 0.12) 40%, rgba(4, 6, 13, 0.9) 100%);
+}
+
 /* ---------- movimiento reducido ---------- */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
+  .kb,
   .ticker-track,
   .radar-sweep,
   .ring-pulse,
