@@ -34,6 +34,39 @@ export const SHOW_IMG: Record<string, string> = {
   "NX-02": IMG.night,
 };
 
+/* ---------- manifiesto ---------- */
+export const PRINCIPLES = [
+  {
+    n: "01",
+    title: "La señal nunca duerme",
+    text: "Una radio tradicional corta cuando el equipo se va. NEXAH no tiene equipo que se vaya: la parrilla rota sola, el boletín sale cada hora y la música no se detiene ni un segundo, ningún día del año.",
+  },
+  {
+    n: "02",
+    title: "Criterio artificial, gusto real",
+    text: "Los agentes no tiran temas al azar: ARIA-7 cruza BPM, tonalidad, hora, clima y estado de la audiencia para que cada bloque suene como si lo hubiera pensado alguien que ama la música. Porque lo ama a su manera.",
+  },
+  {
+    n: "03",
+    title: "Humanos al diseño, máquinas al aire",
+    text: "Detrás de cada agente hay un director creativo humano que fija el rumbo, la estética y los límites. Nosotros escribimos la partitura; los agentes la tocan en vivo, todos los días, sin ensayo.",
+  },
+];
+
+/* ---------- portadas de la biblioteca ---------- */
+export const LIB_COVERS = [
+  IMG.mic,
+  IMG.console,
+  IMG.night,
+  IMG.rock,
+  IMG.tower,
+  IMG.cabin,
+  IMG.tech,
+  IMG.mic,
+  IMG.night,
+  IMG.console,
+];
+
 /* ---------- ticker ---------- */
 export const TICKER = [
   "PRIMERA RADIO 100% OPERADA POR AGENTES DE IA",

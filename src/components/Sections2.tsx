@@ -2,204 +2,117 @@ import { useEffect, useState, type FormEvent } from "react";
 import { engine } from "../audio";
 import {
   ACCENT_HEX,
+  ARCHITECTS,
   CHART,
+  IMG,
   LIBRARY,
-  LOG_LINES,
+  LIB_COVERS,
   NEWS,
   NEWS_CATS,
   PARTNERS,
-  SHOWS,
-  currentShow,
-  pad2,
-  showWindow,
   type NewsCat,
 } from "../data";
-import { useClock, useInView, useListeners, usePrefersReducedMotion } from "../hooks";
-import { IconDown, IconExt, IconFlat, IconLogo, IconSend, IconUp, IconCheck } from "./Icons";
-import { Ticker } from "./Deck";
-import { ACCENT_TEXT, SectionHead } from "./Sections";
+import { useInView } from "../hooks";
+import { CyberImg } from "./Img";
+import { IconCheck, IconExt, IconDown, IconFlat, IconUp, IconSend, IconX, IconIG, IconYT, IconTW } from "./Icons";
+import { SectionHead } from "./Sections";
 
-/* ================= 04 · PARRILLA ================= */
-export function Parrilla() {
-  const now = useClock();
-  const grid = useInView<HTMLDivElement>(0.06);
-  const live = currentShow(now);
+/* ================= 05 · música ================= */
+export function Musica() {
+  const rv = useInView<HTMLDivElement>(0.05);
+  const lib = useInView<HTMLDivElement>(0.05);
+  const [, force] = useState(0);
+  useEffect(() => engine.subscribe(() => force((x) => x + 1)), []);
+  const current = engine.state.track.title;
 
   return (
-    <section id="parrilla" className="relative scroll-mt-20 border-t border-line bg-abyss/60 py-24 md:py-32">
-      <div className="mx-auto max-w-[1440px] px-4 md:px-8">
+    <section id="musica" className="relative scroll-mt-24 border-t border-white/5 py-28 md:py-36">
+      <div className="mx-auto max-w-[1400px] px-5 md:px-10">
         <SectionHead
-          index="04 / PARRILLA 2026"
+          index="05 — EL SONIDO DE LA MÁQUINA"
           title={
             <>
-              AUTO SIGNALS · <span className="text-stroke">PROGRAMACIÓN CONTINUA</span>
+              Música que la radio <span className="text-mag glow-mag">piensa</span>
             </>
           }
-          sub="Cinco señales propias que rotan sin fricción. El sistema detecta tu franja y resalta lo que está al aire en este exacto momento."
+          sub="El Top NEXAH, curado por ARIA-7 con datos reales de la señal, y la biblioteca original de NEXAH Studios producida con Suno. Tocá cualquier tema: esta página lo sintetiza en vivo con el motor PULSE-9."
         />
 
-        <div ref={grid.ref} className="space-y-3">
-          {SHOWS.map((s, i) => {
-            const isLive = s.id === live.id;
-            const hex = ACCENT_HEX[s.accent];
+        {/* chart */}
+        <div ref={rv.ref} className="mt-14 border-t border-white/10">
+          {CHART.map((t, i) => {
+            const active = current === t.title;
             return (
-              <div
-                key={s.id}
-                className={`rv ${grid.inView ? "in" : ""} group relative grid gap-4 border bg-panel/70 p-6 transition-all duration-300 md:grid-cols-[110px_1fr_auto] md:items-center ${
-                  isLive ? "border-mag/70 shadow-[0_0_44px_-14px_rgba(255,46,126,0.55)]" : "border-line hover:border-line2 hover:bg-panel"
+              <button
+                key={t.pos}
+                onClick={() => engine.tune(t, { play: true })}
+                className={`rv ${rv.inView ? "in" : ""} group grid w-full grid-cols-[56px_1fr_auto] items-center gap-4 border-b border-white/8 px-3 py-4 text-left transition-colors duration-300 hover:bg-white/[0.035] md:grid-cols-[72px_1fr_130px_90px_70px] md:gap-6 md:px-5 ${
+                  active ? "bg-neon/[0.05]" : ""
                 }`}
-                style={{ transitionDelay: `${i * 80}ms`, borderLeft: `3px solid ${hex}` }}
+                style={{ transitionDelay: `${i * 45}ms` }}
               >
-                <div>
-                  <p className="font-display text-xl font-black tracking-wide" style={{ color: hex }}>
-                    {showWindow(s)}
-                  </p>
-                  <p className="mt-1 inline-block border border-line px-1.5 py-0.5 font-mono text-[9px] tracking-[0.2em] text-mut">
-                    {s.id}
-                  </p>
-                </div>
-
-                <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <h3 className="font-display text-2xl font-black tracking-tight text-snow md:text-3xl">{s.name}</h3>
-                    {isLive && (
-                      <span className="flex items-center gap-1.5 border border-mag px-2 py-0.5 font-mono text-[9px] tracking-[0.2em] text-mag">
-                        <span className="led bg-mag shadow-[0_0_8px_rgba(255,46,126,0.9)]" /> AL AIRE AHORA
+                <span className={`font-display text-3xl font-extrabold md:text-4xl ${active ? "text-neon" : "text-stroke-dim"}`}>
+                  {String(t.pos).padStart(2, "0")}
+                </span>
+                <span className="min-w-0">
+                  <span className="flex items-center gap-3">
+                    <span className={`truncate text-[16px] font-semibold md:text-lg ${active ? "text-neon" : "text-snow"}`}>{t.title}</span>
+                    {active && (
+                      <span className="eq hidden shrink-0 text-neon sm:inline-flex">
+                        <span /><span /><span /><span />
                       </span>
                     )}
-                  </div>
-                  <p className="mt-1 font-mono text-[11px] tracking-[0.18em] text-mut">{s.genre.toUpperCase()}</p>
-                  <p className="mt-2 max-w-2xl text-sm leading-relaxed text-mut">{s.desc}</p>
-                </div>
-
-                <div className="text-left md:text-right">
-                  <p className="font-mono text-[10px] tracking-[0.18em]" style={{ color: hex }}>
-                    ▸ {s.agent}
-                  </p>
-                  <p className="mt-1 font-mono text-[10px] tracking-wider text-mut">{s.director}</p>
-                </div>
-              </div>
+                  </span>
+                  <span className="block truncate font-mono text-[11px] tracking-[0.14em] text-mut">
+                    {t.artist} · {t.genre}
+                  </span>
+                </span>
+                <span className="hidden font-mono text-[11px] tracking-[0.16em] text-mut md:block">{t.plays} plays</span>
+                <span className="hidden font-mono text-[11px] text-mut md:block">{t.dur}</span>
+                <span className="flex items-center justify-end gap-3">
+                  {t.trend === 1 && <IconUp className="h-3.5 w-3.5 text-lime" />}
+                  {t.trend === -1 && <IconDown className="h-3.5 w-3.5 text-mag" />}
+                  {t.trend === 0 && <IconFlat className="h-3.5 w-3.5 text-mut" />}
+                  <span className="hidden h-8 w-8 items-center justify-center border border-white/15 text-snow opacity-0 transition-all duration-300 group-hover:border-neon group-hover:text-neon group-hover:opacity-100 sm:flex">
+                    <svg viewBox="0 0 24 24" className="h-3 w-3" fill="currentColor"><path d="M7 4.5v15l13-7.5L7 4.5Z" /></svg>
+                  </span>
+                </span>
+              </button>
             );
           })}
         </div>
 
-        <p className={`rv ${grid.inView ? "in" : ""} mt-8 font-mono text-[11px] tracking-[0.2em] text-mut`} style={{ transitionDelay: "500ms" }}>
-          <span className="text-amber">◈</span> PULSO NEXAH es el único programa híbrido: humanos en la mesa, agentes
-          en la cabina. El resto del dial corre 100% autónomo.
-        </p>
-      </div>
-    </section>
-  );
-}
-
-/* ================= 05 · MÚSICA ================= */
-export function Musica() {
-  const head = useInView<HTMLDivElement>(0.06);
-  const [, force] = useState(0);
-  useEffect(() => engine.subscribe(() => force((x) => x + 1)), []);
-  const current = engine.state.track;
-
-  return (
-    <section id="musica" className="relative scroll-mt-20 py-24 md:py-32">
-      <div className="mx-auto max-w-[1440px] px-4 md:px-8">
-        <SectionHead
-          index="05 / MÚSICA"
-          title={
-            <>
-              EL SONIDO <span className="text-mag glow-mag">DE LA MÁQUINA</span>
-            </>
-          }
-          sub="Un chart curado por ARIA-7 con datos reales de la señal y la biblioteca original de NEXAH Studios. Hacé clic en cualquier tema para sintonizarlo."
-        />
-
-        <div ref={head.ref} className="grid gap-10 lg:grid-cols-12">
-          {/* chart */}
-          <div className={`rv ${head.inView ? "in" : ""} lg:col-span-7`}>
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="font-display text-lg font-black tracking-[0.08em] text-snow">TOP NEXAH 10</h3>
-              <span className="font-mono text-[10px] tracking-[0.25em] text-mag">CURADO POR ARIA-7 · SEMANA 35</span>
-            </div>
-            <div className="border border-line bg-panel/60">
-              {CHART.map((t, i) => {
-                const isCurrent = current.title === t.title;
-                return (
-                  <button
-                    key={t.pos}
-                    onClick={() => engine.tune(t, { play: true })}
-                    className={`group grid w-full grid-cols-[38px_20px_1fr_auto] items-center gap-3 border-b border-line/70 px-4 py-3 text-left transition-all duration-200 last:border-0 md:grid-cols-[46px_24px_1fr_90px_60px] ${
-                      isCurrent ? "bg-raise shadow-[inset_3px_0_0_#00e8ff]" : "hover:bg-raise/70"
-                    }`}
-                    style={{ transitionDelay: `${i * 40}ms` }}
-                    aria-label={`Sintonizar ${t.title}`}
-                  >
-                    <span
-                      className={`font-display text-xl font-black ${
-                        t.pos <= 3 ? "text-neon glow-neon" : "text-stroke"
-                      }`}
-                    >
-                      {pad2(t.pos)}
-                    </span>
-                    <span>
-                      {t.trend === 1 && <IconUp className="h-3.5 w-3.5 text-lime" />}
-                      {t.trend === -1 && <IconDown className="h-3.5 w-3.5 text-mag" />}
-                      {t.trend === 0 && <IconFlat className="h-3.5 w-3.5 text-mut" />}
-                    </span>
-                    <span className="min-w-0">
-                      <span className="block truncate font-display text-sm font-bold tracking-wide text-snow">
-                        {t.title.toUpperCase()}
-                        {isCurrent && <span className="ml-2 font-mono text-[9px] tracking-widest text-neon">▸ SONANDO</span>}
-                      </span>
-                      <span className="block truncate font-mono text-[11px] text-mut">
-                        {t.artist} · {t.genre}
-                      </span>
-                    </span>
-                    <span className="hidden text-right font-mono text-[11px] text-mut md:block">{t.plays} ▸</span>
-                    <span className="text-right font-mono text-[11px] text-mut">{t.dur}</span>
-                  </button>
-                );
-              })}
-            </div>
-            <p className="mt-3 font-mono text-[10px] tracking-[0.2em] text-mut">
-              ▲ SUBE · ▼ BAJA · ▶ = REPRODUCCIONES 7D — CLICK PARA SINTONIZAR
-            </p>
+        {/* biblioteca */}
+        <div className="mt-24">
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <h3 className="font-display text-3xl font-extrabold uppercase tracking-tight text-snow md:text-4xl">
+              Biblioteca <span className="text-stroke">NEXAH</span>
+            </h3>
+            <p className="font-mono text-[11px] tracking-[0.24em] text-mut">ORIGINAL NEXAH STUDIOS · PRODUCIDA CON SUNO</p>
           </div>
 
-          {/* biblioteca */}
-          <div className={`rv ${head.inView ? "in" : ""} lg:col-span-5`} style={{ transitionDelay: "150ms" }}>
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="font-display text-lg font-black tracking-[0.08em] text-snow">BIBLIOTECA NEXAH</h3>
-              <span className="font-mono text-[10px] tracking-[0.25em] text-lime">PRODUCIDA CON SUNO</span>
-            </div>
-            <div className="border border-line bg-panel/60">
-              {LIBRARY.map((l) => (
-                <a
-                  key={l.title}
-                  href={l.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="group flex items-center gap-3 border-b border-line/70 px-4 py-3 transition-colors duration-200 last:border-0 hover:bg-raise/70"
-                >
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center border border-mag/40 font-display text-sm font-black text-mag transition-all duration-300 group-hover:bg-mag group-hover:text-ink">
-                    N
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate font-display text-[13px] font-bold tracking-wide text-snow">
-                      {l.title}
-                    </span>
-                    <span className="block font-mono text-[10px] tracking-wider text-mut">
-                      {l.kind} · {l.dur}
-                    </span>
-                  </span>
-                  <IconExt className="h-4 w-4 shrink-0 text-mut transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-mag" />
-                </a>
-              ))}
-            </div>
-            <div className="mt-3 border border-dashed border-line2 px-4 py-3">
-              <p className="font-mono text-[10px] leading-relaxed tracking-wider text-mut">
-                <span className="text-mag">MUSE-Δ //</span> «Cada jingle, mashup y separador de la señal nace acá. La
-                artística se regenera sola cada temporada.»
-              </p>
-            </div>
+          <div ref={lib.ref} className="mt-10 grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-5">
+            {LIBRARY.map((tr, i) => (
+              <a
+                key={tr.title}
+                href={tr.url}
+                target="_blank"
+                rel="noreferrer"
+                className={`rv ${lib.inView ? "in" : ""} zoom-hover group relative block aspect-square overflow-hidden border border-white/8`}
+                style={{ transitionDelay: `${i * 55}ms` }}
+              >
+                <CyberImg src={LIB_COVERS[i % LIB_COVERS.length]} zh className="absolute inset-0" />
+                <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/25 to-transparent" aria-hidden="true" />
+                <span className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center border border-white/25 bg-ink/55 text-snow opacity-0 backdrop-blur-sm transition-all duration-300 group-hover:opacity-100">
+                  <IconExt className="h-3.5 w-3.5" />
+                </span>
+                <div className="absolute inset-x-0 bottom-0 p-4">
+                  <p className="font-mono text-[9px] tracking-[0.22em] text-neon">{tr.kind.toUpperCase()}</p>
+                  <p className="mt-1 truncate text-[13px] font-semibold leading-snug text-snow">{tr.title}</p>
+                  <p className="mt-0.5 font-mono text-[10px] text-mut">{tr.dur} · ESCUCHAR EN SUNO ↗</p>
+                </div>
+              </a>
+            ))}
           </div>
         </div>
       </div>
@@ -207,37 +120,39 @@ export function Musica() {
   );
 }
 
-/* ================= FEED ORACLE-3 ================= */
-const CAT_ACCENT: Record<NewsCat, string> = { ARG: "#00e8ff", MUSIC: "#ff2e7e", TECH: "#c8ff2e", WORLD: "#ffb02e" };
+/* ================= 06 · feed ORACLE-3 ================= */
+const CAT_COLOR: Record<NewsCat, string> = {
+  ARG: ACCENT_HEX.neon,
+  MUSIC: ACCENT_HEX.mag,
+  TECH: ACCENT_HEX.lime,
+  WORLD: ACCENT_HEX.amber,
+};
 
 export function Feed() {
+  const rv = useInView<HTMLDivElement>(0.05);
   const [cat, setCat] = useState<NewsCat | "ALL">("ALL");
-  const grid = useInView<HTMLDivElement>(0.06);
-  const now = useClock(30000);
-  const items = cat === "ALL" ? NEWS : NEWS.filter((n) => n.cat === cat);
+  const items = NEWS.filter((n) => cat === "ALL" || n.cat === cat).slice(0, 8);
 
   return (
-    <section id="feed" className="relative scroll-mt-20 border-t border-line bg-abyss/60 py-24 md:py-32">
-      <div className="mx-auto max-w-[1440px] px-4 md:px-8">
+    <section id="senal" className="relative scroll-mt-24 border-t border-white/5 bg-abyss/60 py-28 md:py-36">
+      <div className="mx-auto max-w-[1400px] px-5 md:px-10">
         <SectionHead
-          index="WIRE / ORACLE-3"
+          index="06 — ORACLE-3 / BOLETÍN"
           title={
             <>
-              EL NOTICIERO <span className="text-lime">QUE NUNCA PARPADEA</span>
+              Lo que la radio <span className="text-amber">lee</span> por vos
             </>
           }
-          sub={`ORACLE-3 cruza 128 fuentes y redacta el boletín de cada hora. Este es su cable ahora mismo — ${pad2(now.getHours())}:${pad2(now.getMinutes())} hs.`}
+          sub="Cada hora, ORACLE-3 cruza 128 fuentes verificadas y redacta el boletín de la señal. Esto es lo que está procesando ahora mismo."
         />
 
-        <div className="mb-8 flex flex-wrap gap-2">
+        <div className={`rv ${rv.inView ? "in" : ""} mt-12 flex flex-wrap gap-2`}>
           {NEWS_CATS.map((c) => (
             <button
               key={c.key}
               onClick={() => setCat(c.key)}
-              className={`notch-sm px-4 py-2 font-mono text-[11px] tracking-[0.22em] transition-all duration-300 ${
-                cat === c.key
-                  ? "bg-neon text-ink shadow-[0_0_20px_rgba(0,232,255,0.4)]"
-                  : "border border-line text-mut hover:border-neon/60 hover:text-neon"
+              className={`px-4 py-2 font-mono text-[11px] tracking-[0.22em] transition-all duration-300 ${
+                cat === c.key ? "bg-snow text-ink" : "border border-white/12 text-mut hover:border-white/40 hover:text-snow"
               }`}
             >
               {c.label}
@@ -245,86 +160,90 @@ export function Feed() {
           ))}
         </div>
 
-        <div ref={grid.ref} className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+        <div ref={rv.ref} className="mt-10 border-t border-white/10">
           {items.map((n, i) => (
             <a
               key={n.title}
               href={n.url}
               target="_blank"
               rel="noreferrer"
-              className={`rv ${grid.inView ? "in" : ""} dossier group flex flex-col border border-line bg-panel/70 p-5`}
-              style={{ transitionDelay: `${(i % 6) * 70}ms` }}
+              className={`rv ${rv.inView ? "in" : ""} group grid grid-cols-[86px_1fr_28px] items-center gap-5 border-b border-white/8 px-3 py-5 transition-all duration-300 hover:bg-white/[0.03] md:grid-cols-[120px_1fr_auto_28px] md:px-5`}
+              style={{ transitionDelay: `${i * 50}ms` }}
             >
-              <div className="flex items-center justify-between">
-                <span
-                  className="px-2 py-0.5 font-mono text-[9px] font-semibold tracking-[0.25em]"
-                  style={{ color: CAT_ACCENT[n.cat], border: `1px solid ${CAT_ACCENT[n.cat]}55`, background: `${CAT_ACCENT[n.cat]}0f` }}
-                >
-                  {n.cat}
-                </span>
-                <IconExt className="h-4 w-4 text-mut transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-neon" />
-              </div>
-              <p className="mt-4 flex-1 text-[15px] font-medium leading-snug text-snow transition-colors group-hover:text-neon">
+              <span
+                className="border px-2 py-1 text-center font-mono text-[10px] tracking-[0.2em]"
+                style={{ color: CAT_COLOR[n.cat], borderColor: `${CAT_COLOR[n.cat]}55` }}
+              >
+                {n.cat}
+              </span>
+              <span className="min-w-0 text-[15px] font-medium leading-snug text-snow/85 transition-colors duration-300 group-hover:text-snow md:text-lg">
                 {n.title}
-              </p>
-              <p className="mt-4 font-mono text-[10px] tracking-[0.2em] text-mut">FUENTE: {n.source.toUpperCase()}</p>
+              </span>
+              <span className="hidden font-mono text-[10px] tracking-[0.18em] text-mut md:block">{n.source.toUpperCase()}</span>
+              <IconExt className="h-4 w-4 justify-self-end text-mut transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-neon" />
             </a>
           ))}
         </div>
+
+        <p className="mt-8 font-mono text-[11px] tracking-[0.2em] text-mut">
+          FUENTES VIVAS: <span className="text-snow/70">PÁGINA/12 · PITCHFORK</span> — EL BOLETÍN COMPLETO SUENA EN EL AIRE, CADA HORA.
+        </p>
       </div>
     </section>
   );
 }
 
-/* ================= 06 · PARTNERS ================= */
+/* ================= 07 · partners ================= */
 export function Partners() {
-  const grid = useInView<HTMLDivElement>(0.08);
-  const banco = PARTNERS[0];
-  const resto = PARTNERS.slice(1);
+  const rv = useInView<HTMLDivElement>(0.08);
+  const [main, ...rest] = PARTNERS;
 
   return (
-    <section id="partners" className="relative scroll-mt-20 py-24 md:py-32">
-      <div className="mx-auto max-w-[1440px] px-4 md:px-8">
+    <section id="partners" className="relative scroll-mt-24 py-28 md:py-36">
+      <div className="mx-auto max-w-[1400px] px-5 md:px-10">
         <SectionHead
-          index="06 / DOSSIER PARTNERS"
+          index="07 — DOSSIER PARTNERS"
           title={
             <>
-              LOS ALIADOS <span className="text-amber">DE LA SEÑAL</span>
+              Quienes sostienen <span className="text-stroke">la señal</span>
             </>
           }
-          sub="Marcas y plataformas que bancan la frecuencia. El dossier completo para partners está disponible bajo pedido en partnerships@nexah.radio."
+          sub="Aliados que financian, potencian y ponen a prueba la infraestructura de NEXAH."
         />
 
-        <div ref={grid.ref} className="grid gap-4 lg:grid-cols-3">
+        <div ref={rv.ref} className="mt-14 grid gap-6 lg:grid-cols-12">
           {/* sponsor principal */}
           <a
-            href={banco.url}
+            href={main.url}
             target="_blank"
             rel="noreferrer"
-            className={`rv ${grid.inView ? "in" : ""} dossier notch group relative flex flex-col border border-amber/40 bg-panel p-8 lg:col-span-2`}
-            style={{ background: "linear-gradient(135deg, rgba(255,176,46,0.07), rgba(10,17,31,0.9) 55%)" }}
+            className={`rv ${rv.inView ? "in" : ""} zoom-hover group relative overflow-hidden border border-white/10 lg:col-span-6`}
           >
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <span className="font-mono text-[10px] tracking-[0.3em] text-amber">◆ {banco.tag}</span>
-              <IconExt className="h-5 w-5 text-mut transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-amber" />
-            </div>
-            <h3 className="mt-6 font-display text-4xl font-black tracking-tight text-snow md:text-5xl">{banco.name}</h3>
-            <p className="mt-4 max-w-xl leading-relaxed text-mut">{banco.desc}</p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              {banco.campaigns?.map((c) => (
-                <span
-                  key={c.title}
-                  className="border border-line2 px-3 py-2 font-mono text-[11px] tracking-wider text-snow transition-colors duration-300 group-hover:border-amber/50"
-                >
-                  {c.title} ↗
-                </span>
-              ))}
+            <CyberImg src={IMG.console} zh className="absolute inset-0 opacity-40" />
+            <div className="absolute inset-0 bg-gradient-to-br from-ink via-ink/85 to-ink/60" aria-hidden="true" />
+            <div className="relative flex h-full flex-col p-9 md:p-12">
+              <p className="font-mono text-[10px] tracking-[0.3em] text-amber">◈ {main.tag}</p>
+              <h3 className="mt-4 font-display text-4xl font-extrabold uppercase tracking-tight text-snow md:text-5xl">{main.name}</h3>
+              <p className="mt-4 max-w-md leading-relaxed text-mut">{main.desc}</p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                {main.campaigns?.map((c) => (
+                  <span
+                    key={c.title}
+                    className="border border-white/15 px-3 py-2 text-[12px] font-medium text-snow/80 transition-colors duration-300 group-hover:border-amber/60 group-hover:text-amber"
+                  >
+                    {c.title} ↗
+                  </span>
+                ))}
+              </div>
+              <span className="mt-auto flex items-center gap-2 pt-10 font-mono text-[11px] tracking-[0.22em] text-amber">
+                SITIO OFICIAL <IconExt className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
+              </span>
             </div>
           </a>
 
-          {/* stack tecnológico */}
-          <div className="flex flex-col gap-4">
-            {resto.map((p, i) => {
+          {/* resto */}
+          <div className="grid gap-6 sm:grid-cols-3 lg:col-span-6 lg:grid-cols-1">
+            {rest.map((p, i) => {
               const hex = ACCENT_HEX[p.accent];
               return (
                 <a
@@ -332,17 +251,20 @@ export function Partners() {
                   href={p.url}
                   target="_blank"
                   rel="noreferrer"
-                  className={`rv ${grid.inView ? "in" : ""} dossier group flex-1 border border-line bg-panel p-6`}
-                  style={{ transitionDelay: `${(i + 1) * 100}ms`, borderLeft: `3px solid ${hex}` }}
+                  className={`rv ${rv.inView ? "in" : ""} group flex items-center gap-6 border border-white/8 bg-panel/50 p-7 transition-all duration-500 hover:-translate-y-1 hover:border-white/25`}
+                  style={{ transitionDelay: `${(i + 1) * 90}ms` }}
                 >
-                  <div className="flex items-center justify-between">
-                    <span className="font-mono text-[9px] tracking-[0.3em]" style={{ color: hex }}>
+                  <span className="font-display text-3xl font-extrabold" style={{ color: hex }}>
+                    {p.name.charAt(0)}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block font-display text-lg font-bold uppercase tracking-tight text-snow">{p.name}</span>
+                    <span className="block font-mono text-[9px] tracking-[0.24em]" style={{ color: hex }}>
                       {p.tag}
                     </span>
-                    <IconExt className="h-4 w-4 text-mut transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                  </div>
-                  <h3 className="mt-3 font-display text-xl font-black tracking-tight text-snow">{p.name}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-mut">{p.desc}</p>
+                    <span className="mt-1.5 block truncate text-[13px] text-mut">{p.desc}</span>
+                  </span>
+                  <IconExt className="h-4 w-4 shrink-0 text-mut transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-snow" />
                 </a>
               );
             })}
@@ -353,231 +275,114 @@ export function Partners() {
   );
 }
 
-/* ================= REGISTRO DEL SISTEMA ================= */
-export function TerminalLog() {
-  const reduced = usePrefersReducedMotion();
-  const { ref, inView } = useInView<HTMLDivElement>(0.2);
-  const [lines, setLines] = useState<number[]>(reduced ? LOG_LINES.map((_, i) => i) : []);
-  const [clock, setClock] = useState(() => new Date());
-
-  useEffect(() => {
-    if (!inView) return;
-    if (reduced) {
-      setLines(LOG_LINES.map((_, i) => i));
-      return;
-    }
-    const id = setInterval(() => {
-      setClock(new Date());
-      setLines((prev) => {
-        const next = prev.length ? (prev[prev.length - 1] + 1) % LOG_LINES.length : 0;
-        return [...prev, next].slice(-9);
-      });
-    }, 1500);
-    return () => clearInterval(id);
-  }, [inView, reduced]);
-
-  return (
-    <section className="relative border-t border-line bg-abyss/60 py-24">
-      <div ref={ref} className="mx-auto grid max-w-[1440px] gap-10 px-4 md:px-8 lg:grid-cols-12">
-        <div className={`rv ${inView ? "in" : ""} lg:col-span-4`}>
-          <p className="flex items-center gap-3 font-mono text-[11px] tracking-[0.3em] text-neon">
-            <span className="inline-block h-px w-10 bg-neon" /> SYSLOG / EN VIVO
-          </p>
-          <h2 className={`mask-line mt-4 ${inView ? "in" : ""}`}>
-            <span className="mask-inner font-display text-3xl font-black tracking-tight text-snow md:text-4xl">
-              LO QUE LA RADIO
-              <br />
-              <span className="text-stroke-neon">PIENSA EN VOZ ALTA</span>
-            </span>
-          </h2>
-          <p className="mt-5 max-w-sm leading-relaxed text-mut">
-            Cada decisión de los agentes queda escrita en el registro. Esto es exactamente lo que el enjambre está
-            haciendo mientras leés esta página.
-          </p>
-        </div>
-
-        <div className={`rv ${inView ? "in" : ""} lg:col-span-8`} style={{ transitionDelay: "150ms" }}>
-          <div className="notch border border-line bg-ink/90">
-            <div className="flex items-center gap-2 border-b border-line px-4 py-2.5">
-              <span className="h-2.5 w-2.5 rounded-full bg-mag" />
-              <span className="h-2.5 w-2.5 rounded-full bg-amber" />
-              <span className="h-2.5 w-2.5 rounded-full bg-lime" />
-              <span className="ml-3 font-mono text-[10px] tracking-[0.25em] text-mut">nexah@core:~/senal — tail -f</span>
-              <span className="ml-auto font-mono text-[10px] text-neon">
-                {pad2(clock.getHours())}:{pad2(clock.getMinutes())}:{pad2(clock.getSeconds())}
-              </span>
-            </div>
-            <div className="min-h-[260px] space-y-2 p-5 font-mono text-[12px] leading-relaxed">
-              {lines.map((li, i) => {
-                const l = LOG_LINES[li];
-                return (
-                  <p key={`${li}-${i}`} className="flex flex-wrap gap-x-2">
-                    <span className="text-mut/70">[{pad2(clock.getHours())}:{pad2(clock.getMinutes())}:{pad2((clock.getSeconds() + i * 7) % 60)}]</span>
-                    <span style={{ color: ACCENT_HEX[l.accent] }}>{l.agent}</span>
-                    <span className="text-mut">::</span>
-                    <span className="text-snow/85">{l.text}</span>
-                  </p>
-                );
-              })}
-              {!reduced && <p className="cursor-blink text-mut" aria-hidden="true" />}
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ================= FOOTER ================= */
+/* ================= footer ================= */
 export function Footer() {
-  const [email, setEmail] = useState("");
-  const [sent, setSent] = useState(false);
-  const listeners = useListeners();
-
+  const rv = useInView<HTMLDivElement>(0.15);
+  const [mail, setMail] = useState("");
+  const [ok, setOk] = useState(false);
   const submit = (e: FormEvent) => {
     e.preventDefault();
-    if (email.includes("@") && email.includes(".")) setSent(true);
+    if (mail.trim().length > 3) setOk(true);
   };
 
   return (
-    <footer className="relative border-t border-line bg-ink">
-      <Ticker reverse />
-      <div className="mx-auto max-w-[1440px] px-4 py-16 md:px-8">
-        {/* newsletter */}
-        <div className="notch mb-16 border border-line bg-panel/70 p-8 md:p-10">
-          <div className="grid items-center gap-8 lg:grid-cols-2">
-            <div>
-              <p className="font-mono text-[11px] tracking-[0.3em] text-mag">FRECUENCIA PRIVADA</p>
-              <h3 className="mt-3 font-display text-2xl font-black tracking-tight text-snow md:text-3xl">
-                SUMATE A LA SEÑAL <span className="text-neon">108.0</span>
-              </h3>
-              <p className="mt-3 max-w-md text-sm leading-relaxed text-mut">
-                Reporte semanal del laboratorio: qué aprendieron los agentes, estrenos de la biblioteca y acceso
-                anticipado a nuevas señales.
-              </p>
-            </div>
-            {sent ? (
-              <div className="flex items-center gap-3 border border-lime/50 bg-lime/5 px-5 py-4">
-                <IconCheck className="h-5 w-5 shrink-0 text-lime" />
-                <p className="font-mono text-[12px] tracking-wider text-lime">
-                  ✓ SEÑAL RECIBIDA — tu receptor quedó sintonizado en 108.0
-                </p>
-              </div>
-            ) : (
-              <form onSubmit={submit} className="flex flex-col gap-3 sm:flex-row">
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="tu@correo.com"
-                  className="flex-1 border border-line bg-ink px-4 py-3.5 font-mono text-sm text-snow outline-none transition-colors placeholder:text-mut/60 focus:border-neon"
-                  aria-label="Correo electrónico"
-                />
-                <button
-                  type="submit"
-                  className="notch-sm flex items-center justify-center gap-2 bg-neon px-6 py-3.5 font-display text-xs font-black tracking-[0.2em] text-ink transition-all duration-300 hover:shadow-[0_0_28px_rgba(0,232,255,0.5)] active:scale-95"
-                >
-                  <IconSend className="h-4 w-4" /> SINTONIZAR
-                </button>
-              </form>
-            )}
-          </div>
-        </div>
-
-        {/* columnas */}
-        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
-          <div>
-            <div className="flex items-center gap-2.5">
-              <IconLogo className="h-9 w-9 text-neon" />
-              <span className="leading-none">
-                <span className="block font-display text-xl font-black tracking-[0.18em] text-snow">NEXAH</span>
-                <span className="block font-mono text-[9px] tracking-[0.42em] text-neon">RADIO LAB</span>
-              </span>
-            </div>
-            <p className="mt-5 text-sm leading-relaxed text-mut">
-              La primera radio del mundo operada 100% por agentes de inteligencia artificial. Nació en Formosa,
-              transmite para todo el planeta.
+    <footer className="relative overflow-hidden border-t border-white/8 bg-abyss">
+      <div className="mx-auto max-w-[1400px] px-5 pb-10 pt-20 md:px-10">
+        <div ref={rv.ref} className="grid gap-14 lg:grid-cols-12">
+          <div className="lg:col-span-5">
+            <p className={`rv ${rv.inView ? "in" : ""} font-mono text-[11px] tracking-[0.32em] text-neon`}>NEXAH RADIO LAB</p>
+            <p className={`rv ${rv.inView ? "in" : ""} mt-4 font-display text-5xl font-extrabold uppercase leading-[0.95] tracking-tight text-snow md:text-6xl`} style={{ transitionDelay: "80ms" }}>
+              La señal <br />
+              <span className="text-stroke">no duerme.</span>
             </p>
-            <div className="mt-5 space-y-1.5 font-mono text-[10px] tracking-[0.2em] text-mut">
-              <p>
-                <span className="led mr-2 bg-lime shadow-[0_0_8px_rgba(200,255,46,0.9)]" /> ESTADO: TRANSMITIENDO
-              </p>
-              <p>UPTIME: 99.98% · NEXAH OS v5.1</p>
-              <p>OYENTES: <span className="text-lime">{listeners.toLocaleString("es-AR")}</span></p>
+            <form onSubmit={submit} className={`rv ${rv.inView ? "in" : ""} mt-9 max-w-sm`} style={{ transitionDelay: "160ms" }}>
+              <p className="mb-3 text-sm text-mut">Recibí el boletín neural de ORACLE-3, una vez por semana.</p>
+              {ok ? (
+                <p className="flex items-center gap-3 border border-lime/40 bg-lime/10 px-4 py-3.5 text-sm font-medium text-lime">
+                  <IconCheck className="h-4 w-4" /> Señal registrada — ORACLE-3 te escribirá.
+                </p>
+              ) : (
+                <div className="flex border border-white/15 focus-within:border-neon">
+                  <input
+                    value={mail}
+                    onChange={(e) => setMail(e.target.value)}
+                    type="email"
+                    required
+                    placeholder="tu@correo.com"
+                    className="w-full bg-transparent px-4 py-3.5 text-sm text-snow outline-none placeholder:text-mut/60"
+                  />
+                  <button type="submit" aria-label="Suscribirme" className="btn-primary flex items-center px-5">
+                    <IconSend className="h-4 w-4" />
+                  </button>
+                </div>
+              )}
+            </form>
+          </div>
+
+          <div className={`rv ${rv.inView ? "in" : ""} grid grid-cols-2 gap-10 sm:grid-cols-3 lg:col-span-7 lg:pt-2`} style={{ transitionDelay: "120ms" }}>
+            <div>
+              <p className="font-mono text-[10px] tracking-[0.28em] text-mut">SEÑAL</p>
+              <ul className="mt-5 space-y-3 text-sm">
+                {[
+                  ["El proyecto", "#proyecto"],
+                  ["Los agentes", "#agentes"],
+                  ["Parrilla", "#parrilla"],
+                  ["Música", "#musica"],
+                  ["Partners", "#partners"],
+                ].map(([l, h]) => (
+                  <li key={h}>
+                    <a href={h} className="link-slide text-snow/75 hover:text-neon">{l}</a>
+                  </li>
+                ))}
+              </ul>
             </div>
-          </div>
-
-          <div>
-            <p className="font-mono text-[11px] tracking-[0.3em] text-snow">MAPA DE SEÑAL</p>
-            <ul className="mt-5 space-y-3">
-              {[
-                ["#proyecto", "El proyecto"],
-                ["#agentes", "Agentes en cabina"],
-                ["#cadena", "La cadena de transmisión"],
-                ["#parrilla", "Parrilla / Auto Signals"],
-                ["#musica", "Top 10 + Biblioteca"],
-                ["#feed", "Wire de noticias"],
-                ["#partners", "Dossier partners"],
-              ].map(([href, label]) => (
-                <li key={href}>
-                  <a href={href} className="group font-mono text-[12px] tracking-wider text-mut transition-colors hover:text-neon">
-                    <span className="text-neon opacity-0 transition-opacity group-hover:opacity-100">▸ </span>
-                    {label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <p className="font-mono text-[11px] tracking-[0.3em] text-snow">FRECUENCIAS</p>
-            <ul className="mt-5 space-y-3 font-mono text-[12px] text-mut">
-              {SHOWS.map((s) => (
-                <li key={s.id} className="flex items-center justify-between gap-3">
-                  <span className="text-snow">{s.name}</span>
-                  <span style={{ color: ACCENT_HEX[s.accent] }}>{showWindow(s)}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <p className="font-mono text-[11px] tracking-[0.3em] text-snow">ALIANZAS</p>
-            <ul className="mt-5 space-y-3">
-              {PARTNERS.map((p) => (
-                <li key={p.name}>
+            <div>
+              <p className="font-mono text-[10px] tracking-[0.28em] text-mut">ECOSISTEMA</p>
+              <ul className="mt-5 space-y-3 text-sm">
+                {[
+                  ["Suno", "https://suno.com"],
+                  ["ElevenLabs", "https://elevenlabs.io"],
+                  ["Radio Paradise", "https://radioparadise.com"],
+                  ["Banco Formosa", "https://www.bancoformosa.com.ar/"],
+                ].map(([l, h]) => (
+                  <li key={h}>
+                    <a href={h} target="_blank" rel="noreferrer" className="link-slide text-snow/75 hover:text-neon">
+                      {l} ↗
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <p className="font-mono text-[10px] tracking-[0.28em] text-mut">ARQUITECTOS</p>
+              <ul className="mt-5 space-y-3 text-sm text-snow/75">
+                {ARCHITECTS.map((a) => (
+                  <li key={a.name}>{a.name}</li>
+                ))}
+              </ul>
+              <div className="mt-7 flex gap-3">
+                {[IconX, IconIG, IconYT, IconTW].map((I, i) => (
                   <a
-                    href={p.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="group flex items-center gap-2 font-mono text-[12px] tracking-wider text-mut transition-colors hover:text-neon"
+                    key={i}
+                    href="#top"
+                    aria-label="Red social"
+                    className="flex h-9 w-9 items-center justify-center border border-white/12 text-mut transition-all duration-300 hover:border-neon hover:text-neon"
                   >
-                    {p.name}
-                    <IconExt className="h-3.5 w-3.5 opacity-50 group-hover:opacity-100" />
+                    <I className="h-4 w-4" />
                   </a>
-                </li>
-              ))}
-            </ul>
-            <div className="mt-6 border border-dashed border-line2 p-3">
-              <p className="font-mono text-[9px] leading-relaxed tracking-wider text-mut">
-                ¿QUERÉS AUSPICIAR LA SEÑAL?
-                <br />
-                <span className={ACCENT_TEXT.amber}>partnerships@nexah.radio</span>
-              </p>
+                ))}
+              </div>
             </div>
           </div>
         </div>
 
-        {/* barra final */}
-        <div className="mt-14 flex flex-col items-start justify-between gap-4 border-t border-line pt-6 md:flex-row md:items-center">
-          <p className="font-mono text-[10px] tracking-[0.2em] text-mut">
-            © 2026 NEXAH RADIO LAB — OPERADA POR AGENTES AUTÓNOMOS · SUPERVISADA POR HUMANOS
-          </p>
-          <p className="flex items-center gap-2 font-mono text-[10px] tracking-[0.2em] text-mut">
-            FORMOSA, ARGENTINA <span className="text-neon">·</span> 26.18°S 58.18°O <span className="text-neon">·</span>{" "}
-            <span className="text-neon">108.0 NEXAH</span>
-          </p>
+        <p className="pointer-events-none mt-16 select-none text-center font-display text-[clamp(3rem,11vw,10rem)] font-extrabold uppercase leading-none text-stroke-dim" aria-hidden="true">
+          NEXAH
+        </p>
+
+        <div className="mt-6 flex flex-col items-center justify-between gap-3 border-t border-white/8 pt-6 font-mono text-[10px] tracking-[0.2em] text-mut md:flex-row">
+          <p>© 2026 NEXAH STUDIOS · FRECUENCIA DIGITAL 108.0</p>
+          <p>DISEÑADO POR HUMANOS · <span className="text-neon">OPERADO POR AGENTES</span></p>
         </div>
       </div>
     </footer>
