@@ -24,6 +24,14 @@ export const IMG = {
   tower: `${GEN}/2ec68e7a-638a-46f5-b3a4-bb56b5f9d7e2/_result.png`,
   console: `${GEN}/5758eb38-96a3-4a52-9af6-d9dd4c21d606/_result.png`,
   cabin: `${GEN}/b48a8867-3edb-406d-a767-06cc890f3747/_result.png`,
+  kiro: `${GEN}/561f6c81-d7d3-45d4-9e84-91de97843431/_result.png`,
+};
+
+/* ---------- host ---------- */
+export const HOST = {
+  name: "KIRO",
+  role: "HOST · EL ROSTRO DE NEXA-01",
+  quote: "La voz es de NEXA-01. La cara la pongo yo.",
 };
 
 export const SHOW_IMG: Record<string, string> = {

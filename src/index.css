@@ -279,6 +279,51 @@ body {
   transform-origin: left;
 }
 
+/* ---------- stickers / monitor ---------- */
+.float-soft {
+  animation: floatsoft 6.5s ease-in-out infinite;
+}
+@keyframes floatsoft {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-9px);
+  }
+}
+
+.news-in {
+  animation: newsin 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes newsin {
+  from {
+    opacity: 0;
+    transform: translateY(9px);
+  }
+}
+
+.newsprog {
+  animation: newsprog 4.2s linear both;
+}
+@keyframes newsprog {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.screen-scan {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(238, 242, 251, 0.05) 0px,
+    rgba(238, 242, 251, 0.05) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
 /* ---------- volumen ---------- */
 input[type="range"].vol {
   -webkit-appearance: none;
