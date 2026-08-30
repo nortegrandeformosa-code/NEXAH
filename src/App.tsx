@@ -1,8 +1,8 @@
-import { Header, Hero } from "./components/Deck";
+import { Header, Hero, LedBanner } from "./components/Deck";
 import { PlayerBar } from "./components/Player";
 import { Agentes, Cadena, Manifiesto } from "./components/Sections";
 import { Feed, Footer, Musica, Partners } from "./components/Sections2";
-import { Cabina, Parrilla, Torre } from "./components/Visual";
+import { Backstage, Cabina, Parrilla, Torre } from "./components/Visual";
 
 export default function App() {
   return (
@@ -17,10 +17,12 @@ export default function App() {
         <Cadena />
         <Torre />
         <Parrilla />
+        <Backstage />
         <Musica />
         <Cabina />
         <Feed />
         <Partners />
+        <LedBanner reverse items="brand" />
       </main>
       <Footer />
       <PlayerBar />

@@ -14,8 +14,47 @@ export const ACCENT_HEX: Record<Accent, string> = {
 /* ---------- imágenes de la señal ---------- */
 const GEN = "https://image.qwenlm.ai/generated-images";
 
+/* ---------- identidad / marca ---------- */
+export const LOGO_URL =
+  "https://yt3.ggpht.com/w_a7dzGN5xYbnWiWM8Hj_gJDx68Oix55kV4p_fQlZkuQ8kW8DRUyf0QO_R4zGV3UD0d8Aq65zw=s176-c-k-c0x00ffffff-no-rj-mo";
+
+/* ---------- video back de producción ---------- */
+export const BACKSTAGE = {
+  video: "https://archive.org/download/A_Trip_Down_Market_Street/A_Trip_Down_Market_Street_512kb.mp4",
+  credit: "ARCHIVO PRELINGER · 1906 · DOMINIO PÚBLICO",
+};
+
+/* ---------- hosts pop art ---------- */
+export interface HostPersona {
+  name: string;
+  agent: string;
+  role: string;
+  voice: string;
+  accent: Accent;
+}
+
+export const HOSTS: HostPersona[] = [
+  {
+    name: "KIRO",
+    agent: "NEXA-01",
+    role: "HOST PRINCIPAL",
+    voice: "VOICE-KIRO-ES · ELEVENLABS",
+    accent: "neon",
+  },
+  {
+    name: "LUNA",
+    agent: "ARIA-7",
+    role: "CO-HOST",
+    voice: "VOICE-LUNA-ES · ELEVENLABS",
+    accent: "mag",
+  },
+];
+
 export const IMG = {
   hero: `${GEN}/f142f20d-3b79-4a98-9953-abdf7710a05a/_result.png`,
+  kiro: `${GEN}/cbfc2d10-dfca-47a6-b50a-9a0ba9a88d7f/_result.png`,
+  luna: `${GEN}/c89adb7e-0dba-40d0-ac72-76252d0a4dd6/_result.png`,
+  backstage: `${GEN}/ad7c8d11-2aee-41d0-bffc-508e83455e1d/_result.png`,
   mic: `${GEN}/0e4316f2-00f6-450d-9a00-7e28f35c89fb/_result.png`,
   night: `${GEN}/4dc2ec60-a84d-440d-bdfd-0efb231f1063/_result.png`,
   rock: `${GEN}/0a4b5a2c-8d55-4716-8059-222527fed20a/_result.png`,
@@ -24,14 +63,6 @@ export const IMG = {
   tower: `${GEN}/2ec68e7a-638a-46f5-b3a4-bb56b5f9d7e2/_result.png`,
   console: `${GEN}/5758eb38-96a3-4a52-9af6-d9dd4c21d606/_result.png`,
   cabin: `${GEN}/b48a8867-3edb-406d-a767-06cc890f3747/_result.png`,
-  kiro: `${GEN}/561f6c81-d7d3-45d4-9e84-91de97843431/_result.png`,
-};
-
-/* ---------- host ---------- */
-export const HOST = {
-  name: "KIRO",
-  role: "HOST · EL ROSTRO DE NEXA-01",
-  quote: "La voz es de NEXA-01. La cara la pongo yo.",
 };
 
 export const SHOW_IMG: Record<string, string> = {
@@ -259,6 +290,7 @@ export interface Show {
   desc: string;
   agent: string;
   director: string;
+  voice: string;
   start: number;
   end: number;
   accent: Accent;
@@ -272,6 +304,7 @@ export const SHOWS: Show[] = [
     desc: "El programa insignia. Conducción de NEXA-01 con boletines de ORACLE-3 y pedidos de la comunidad.",
     agent: "NEXA-01 · LA VOZ",
     director: "Dirección creativa: Fede Brites",
+    voice: "KIRO · VOICE-ES-01",
     start: 6,
     end: 10,
     accent: "neon",
@@ -283,6 +316,7 @@ export const SHOWS: Show[] = [
     desc: "Dossier tecnológico: agentes, modelos, hardware y el futuro de la radio autónoma.",
     agent: "ORACLE-3 · ATLAS-2",
     director: "Dirección creativa: Ignacio Mazzeo",
+    voice: "KIRO · VOICE-ES-01",
     start: 10,
     end: 13,
     accent: "lime",
@@ -294,6 +328,7 @@ export const SHOWS: Show[] = [
     desc: "La mesa en vivo con la crew: conversación humana + agentes en cabina, híbrida y sin guion.",
     agent: "GHOST-5 + CREW HUMANA",
     director: "Conduce: Iván & la crew de NEXAH",
+    voice: "KIRO + LUNA · VOZ PRO",
     start: 13,
     end: 17,
     accent: "amber",
@@ -305,6 +340,7 @@ export const SHOWS: Show[] = [
     desc: "Guitarras al frente: clásicos, alternativo y estrenos, encadenados por tonalidad.",
     agent: "PULSE-9 · ARIA-7",
     director: "Dirección creativa: Gonzo",
+    voice: "KIRO · VOICE-ES-01",
     start: 17,
     end: 21,
     accent: "mag",
@@ -316,6 +352,7 @@ export const SHOWS: Show[] = [
     desc: "La frecuencia nocturna: deep, techno y sintetizadores hasta que vuelva la luz.",
     agent: "ARIA-7 · MUSE-Δ",
     director: "Dirección creativa: Maia Luz",
+    voice: "LUNA · VOICE-ES-02",
     start: 21,
     end: 30,
     accent: "mag",

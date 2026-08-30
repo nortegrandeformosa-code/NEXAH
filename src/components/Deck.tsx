@@ -1,7 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import { engine } from "../audio";
-import { ACCENT_HEX, HOST, IMG, NEWS, TICKER, pad2, type NewsCat } from "../data";
-import { useClock, useListeners, usePrefersReducedMotion, useScramble } from "../hooks";
+import {
+  ACCENT_HEX,
+  HOSTS,
+  IMG,
+  LOGO_URL,
+  NEWS,
+  TICKER,
+  pad2,
+  type HostPersona,
+  type NewsCat,
+} from "../data";
+import { useClock, useListeners, useScramble } from "../hooks";
 import { CyberImg } from "./Img";
 import { IconLogo, IconPlay } from "./Icons";
 
@@ -12,6 +22,21 @@ const NAV = [
   { href: "#musica", label: "Música" },
   { href: "#partners", label: "Partners" },
 ];
+
+/* ================= logo con fallback ================= */
+export function BrandLogo({ className = "h-8 w-8" }: { className?: string }) {
+  const [failed, setFailed] = useState(false);
+  if (failed) return <IconLogo className={`${className} text-neon`} />;
+  return (
+    <img
+      src={LOGO_URL}
+      alt="NEXAH"
+      className={`${className} rounded-full border border-white/25 object-cover`}
+      onError={() => setFailed(true)}
+      draggable={false}
+    />
+  );
+}
 
 /* ================= header minimal ================= */
 export function Header() {
@@ -25,7 +50,7 @@ export function Header() {
     <header className="fixed inset-x-0 top-0 z-50 border-b border-white/5 bg-ink/70 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-[1400px] items-center gap-8 px-5 md:px-10">
         <a href="#top" className="group flex items-center gap-3">
-          <IconLogo className="h-7 w-7 text-neon transition-transform duration-700 group-hover:rotate-[28deg]" />
+          <BrandLogo className="h-8 w-8 transition-transform duration-700 group-hover:rotate-[18deg]" />
           <span className="font-display text-[15px] font-bold tracking-[0.22em] text-snow">
             NEXAH<span className="text-neon">.</span>
           </span>
@@ -84,7 +109,7 @@ export function Header() {
   );
 }
 
-/* ================= sticker · monitor de noticias ================= */
+/* ================= banner LED · atraviesa el portal ================= */
 const CAT_COLOR: Record<NewsCat, string> = {
   ARG: ACCENT_HEX.neon,
   MUSIC: ACCENT_HEX.mag,
@@ -92,134 +117,108 @@ const CAT_COLOR: Record<NewsCat, string> = {
   WORLD: ACCENT_HEX.amber,
 };
 
-export function NewsMonitor() {
-  const [idx, setIdx] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const reduced = usePrefersReducedMotion();
+export function LedBanner({ reverse = false, items = "news" }: { reverse?: boolean; items?: "news" | "brand" }) {
+  const lines =
+    items === "news"
+      ? NEWS.map((n) => ({ tag: n.cat, color: CAT_COLOR[n.cat], text: n.title }))
+      : [...TICKER, "SEÑAL 108.0 · NEXAH RADIO LAB", ...TICKER].map((t) => ({
+          tag: "NEXAH",
+          color: ACCENT_HEX.neon,
+          text: t,
+        }));
 
-  useEffect(() => {
-    if (reduced || paused) return;
-    const id = setInterval(() => setIdx((i) => (i + 1) % NEWS.length), 4200);
-    return () => clearInterval(id);
-  }, [reduced, paused]);
-
-  const n = NEWS[idx];
+  const loop = [...lines, ...lines];
 
   return (
-    <div
-      className="relative w-[300px] max-w-full rotate-[2.5deg] border border-white/12 bg-abyss shadow-[0_28px_70px_-18px_rgba(0,0,0,0.85)] transition-transform duration-500 hover:rotate-0 hover:scale-[1.025]"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-    >
-      {/* cinta adhesiva */}
-      <span className="absolute -top-3 left-1/2 h-6 w-24 -translate-x-1/2 -rotate-2 bg-snow/12 backdrop-blur-[1px]" aria-hidden="true" />
-
-      {/* marco del monitor */}
-      <div className="flex items-center gap-2 border-b border-white/8 px-4 py-2.5">
-        <span className="flex gap-1.5">
-          <i className="h-2 w-2 rounded-full bg-mag/80" />
-          <i className="h-2 w-2 rounded-full bg-amber/80" />
-          <i className="h-2 w-2 rounded-full bg-lime/80" />
-        </span>
-        <span className="font-mono text-[9px] tracking-[0.26em] text-mut">NOTICIAS DEL DÍA</span>
-        <span className="ml-auto flex items-center gap-1.5 font-mono text-[9px] tracking-[0.2em] text-mag">
-          <span className="led bg-mag shadow-[0_0_8px_rgba(255,77,143,0.9)]" /> REC
-        </span>
-      </div>
-
-      {/* pantalla */}
-      <div className="screen-scan relative min-h-[128px] px-4 py-4">
-        <div className="flex items-center justify-between gap-3">
-          <span
-            className="border px-1.5 py-0.5 font-mono text-[9px] tracking-[0.2em]"
-            style={{ color: CAT_COLOR[n.cat], borderColor: `${CAT_COLOR[n.cat]}55` }}
-          >
-            {n.cat}
-          </span>
-          <span className="font-mono text-[9px] tracking-[0.18em] text-mut">
-            HACE {(idx + 1) * 7} MIN · {String(idx + 1).padStart(2, "0")}/{NEWS.length}
-          </span>
-        </div>
-        <p key={idx} className="news-in mt-3 min-h-[54px] text-[13.5px] font-semibold leading-snug text-snow">
-          {n.title}
-        </p>
-        <div className="mt-2 flex items-center justify-between">
-          <span className="font-mono text-[9px] tracking-[0.2em] text-mut">{n.source.toUpperCase()}</span>
-          <span className="flex gap-1.5">
-            <button
-              onClick={() => setIdx((i) => (i - 1 + NEWS.length) % NEWS.length)}
-              aria-label="Noticia anterior"
-              className="flex h-6 w-6 items-center justify-center border border-white/12 text-mut transition-colors hover:border-neon hover:text-neon"
+    <div className="led-banner led-dots relative overflow-hidden py-3.5">
+      <div className={`led-track ${reverse ? "led-reverse" : ""}`} style={{ "--speed": items === "news" ? "90s" : "60s" } as CSSProperties}>
+        {loop.map((l, i) => (
+          <span key={i} className="flex shrink-0 items-center gap-4 pr-10">
+            <span
+              className="led-text border px-1.5 py-0.5 font-mono text-[10px] font-semibold tracking-[0.2em]"
+              style={{ color: l.color, borderColor: `${l.color}55`, background: `${l.color}12` }}
             >
-              ‹
-            </button>
-            <button
-              onClick={() => setIdx((i) => (i + 1) % NEWS.length)}
-              aria-label="Noticia siguiente"
-              className="flex h-6 w-6 items-center justify-center border border-white/12 text-mut transition-colors hover:border-neon hover:text-neon"
-            >
-              ›
-            </button>
+              {l.tag}
+            </span>
+            <span className="led-text font-mono text-[12px] font-medium tracking-[0.14em] text-snow/90">{l.text}</span>
+            <span className="led-text font-mono text-[12px] text-neon">◆</span>
           </span>
-        </div>
+        ))}
       </div>
-
-      {/* barra de progreso del boletín */}
-      <div className="h-[3px] w-full bg-white/6">
-        {!reduced && !paused && <div key={idx} className="newsprog h-full bg-neon" />}
-      </div>
-
-      <p className="border-t border-white/8 px-4 py-2 font-mono text-[8.5px] tracking-[0.24em] text-mut">
-        BOLETÍN ORACLE-3 · SUENA CADA HORA EN EL AIRE
-      </p>
+      {/* viñetas laterales para dar marco de pantalla */}
+      <span className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-ink to-transparent" aria-hidden="true" />
+      <span className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-ink to-transparent" aria-hidden="true" />
     </div>
   );
 }
 
-/* ================= sticker · KIRO, el host ================= */
-export function KiroPoster() {
+/* ================= sticker · host individual ================= */
+function HostSticker({ host, img, flip = false, className = "" }: { host: HostPersona; img: string; flip?: boolean; className?: string }) {
+  const hex = ACCENT_HEX[host.accent];
   return (
-    <div className="relative mx-auto w-full max-w-[390px]">
-      <div className="float-soft">
-        <figure className="relative -rotate-[3.5deg] border-[3px] border-snow bg-panel shadow-[0_36px_90px_-22px_rgba(0,0,0,0.85)] transition-transform duration-500 hover:rotate-0">
-          {/* cintas */}
-          <span className="absolute -top-3.5 left-6 z-10 h-6 w-20 -rotate-6 bg-snow/14" aria-hidden="true" />
-          <span className="absolute -top-3 right-8 z-10 h-6 w-16 rotate-3 bg-snow/10" aria-hidden="true" />
-
-          <div className="relative aspect-[3/4] overflow-hidden">
-            <CyberImg src={IMG.kiro} eager className="absolute inset-0" />
-            <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-transparent to-transparent" aria-hidden="true" />
-            <p className="absolute bottom-4 left-4 right-4 font-mono text-[10px] tracking-[0.14em] text-snow/75">
-              «{HOST.quote}»
-            </p>
-          </div>
-
-          <figcaption className="flex items-center justify-between gap-3 px-5 py-4">
-            <div>
-              <p className="font-display text-2xl font-extrabold uppercase tracking-tight text-snow">{HOST.name}</p>
-              <p className="mt-0.5 font-mono text-[9px] tracking-[0.24em] text-mut">{HOST.role}</p>
-            </div>
-            <span className="flex shrink-0 items-center gap-1.5 border border-lime/50 px-2 py-1 font-mono text-[9px] tracking-[0.18em] text-lime">
-              <span className="led bg-lime shadow-[0_0_8px_rgba(198,243,91,0.9)]" /> ONLINE
-            </span>
-          </figcaption>
-        </figure>
+    <figure
+      className={`float-soft relative w-[190px] shrink-0 border-[3px] border-snow bg-panel shadow-[0_26px_60px_-18px_rgba(0,0,0,0.85)] transition-transform duration-500 hover:rotate-0 hover:scale-[1.04] sm:w-[220px] ${
+        flip ? "rotate-[3.5deg]" : "-rotate-[3.5deg]"
+      } ${className}`}
+      style={{ animationDelay: flip ? "-3s" : "0s" }}
+    >
+      <span className="absolute -top-3 left-1/2 z-10 h-6 w-16 -translate-x-1/2 -rotate-2 bg-snow/14" aria-hidden="true" />
+      <div className="relative aspect-[4/5] overflow-hidden">
+        <CyberImg src={img} eager className="absolute inset-0" />
       </div>
+      <figcaption className="flex items-center justify-between gap-2 px-3.5 py-3">
+        <div>
+          <p className="font-display text-lg font-extrabold uppercase leading-none tracking-tight" style={{ color: hex }}>
+            {host.name}
+          </p>
+          <p className="mt-1 font-mono text-[8px] tracking-[0.18em] text-mut">{host.role}</p>
+        </div>
+        <span className="flex shrink-0 items-center gap-1 border px-1.5 py-1 font-mono text-[8px] tracking-[0.14em]" style={{ color: hex, borderColor: `${hex}55` }}>
+          <span className="led" style={{ background: hex, boxShadow: `0 0 8px ${hex}` }} /> ON
+        </span>
+      </figcaption>
+    </figure>
+  );
+}
 
-      {/* sello 24/7 */}
-      <span className="absolute -right-4 -top-6 z-10 flex h-[68px] w-[68px] rotate-12 items-center justify-center rounded-full bg-lime font-display text-[12px] font-extrabold text-ink shadow-[0_10px_30px_-6px_rgba(198,243,91,0.5)]">
-        24/7
+/* ================= sticker duo · cabina en vivo ================= */
+export function DuoPoster() {
+  const [kiro, luna] = HOSTS;
+  return (
+    <div className="relative mx-auto flex w-full max-w-[430px] items-end justify-center">
+      {/* halo de cabina */}
+      <div
+        className="absolute left-1/2 top-1/2 -z-10 h-[420px] w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-25 blur-3xl"
+        style={{ background: "radial-gradient(circle, #5ee9ff 0%, transparent 60%)" }}
+        aria-hidden="true"
+      />
+
+      <HostSticker host={kiro} img={IMG.kiro} className="relative z-10 -mr-7" />
+      <HostSticker host={luna} img={IMG.luna} flip className="relative z-0 -mb-5" />
+
+      {/* sello EN CABINA */}
+      <span className="absolute -top-7 left-1/2 z-20 -translate-x-1/2 rotate-[-5deg] border-2 border-mag bg-ink/85 px-4 py-1.5 font-display text-[13px] font-extrabold uppercase tracking-[0.16em] text-mag shadow-[0_10px_30px_-6px_rgba(255,77,143,0.4)]">
+        EN CABINA · EN VIVO
       </span>
 
-      {/* monitor de noticias superpuesto */}
-      <div className="relative z-20 -mt-9 ml-4 sm:ml-[-30px] lg:absolute lg:-bottom-16 lg:-left-20 lg:mt-0 lg:ml-0">
-        <NewsMonitor />
+      {/* placa inferior */}
+      <div className="absolute -bottom-12 left-1/2 z-20 w-[92%] -translate-x-1/2 border border-white/12 bg-abyss/90 px-4 py-3 backdrop-blur-md">
+        <div className="flex items-center justify-between gap-3">
+          <p className="font-mono text-[9px] leading-relaxed tracking-[0.16em] text-mut">
+            {kiro.voice}
+            <br />
+            {luna.voice}
+          </p>
+          <span className="flex items-center gap-1.5 font-mono text-[9px] tracking-[0.2em] text-lime">
+            <span className="led bg-lime shadow-[0_0_8px_rgba(198,243,91,0.9)]" /> VOICES ONLINE
+          </span>
+        </div>
       </div>
     </div>
   );
 }
 
-/* ================= apertura · afiche con protagonista ================= */
+/* ================= apertura · afiche con el dúo ================= */
 export function Hero() {
   const { out, done } = useScramble("NEXAH", 200);
   const now = useClock();
@@ -243,7 +242,7 @@ export function Hero() {
         108.0
       </span>
 
-      <div className="relative mx-auto grid w-full max-w-[1400px] flex-1 items-start gap-16 px-5 pb-24 pt-14 md:px-10 md:pb-28 lg:grid-cols-12 lg:gap-8 lg:pt-20">
+      <div className="relative mx-auto grid w-full max-w-[1400px] flex-1 items-center gap-16 px-5 pb-32 pt-14 md:px-10 md:pb-36 lg:grid-cols-12 lg:gap-8 lg:pt-16">
         {/* editorial */}
         <div className="lg:col-span-7">
           <p className="flex items-center gap-3 font-mono text-[11px] tracking-[0.32em] text-neon">
@@ -308,18 +307,18 @@ export function Hero() {
           </div>
         </div>
 
-        {/* protagonista: KIRO + monitor de noticias */}
-        <div className="relative z-10 pt-4 lg:col-span-5 lg:pt-10">
-          <KiroPoster />
+        {/* protagonista: el dúo en cabina */}
+        <div className="relative z-10 pt-6 lg:col-span-5 lg:pt-0">
+          <DuoPoster />
         </div>
       </div>
 
-      <Ticker />
+      <LedBanner />
     </section>
   );
 }
 
-/* ================= ticker ================= */
+/* ================= ticker (legacy, se mantiene export) ================= */
 export function Ticker() {
   const items = [...TICKER, ...TICKER];
   return (

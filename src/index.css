@@ -279,6 +279,37 @@ body {
   transform-origin: left;
 }
 
+/* ---------- banner LED ---------- */
+.led-banner {
+  background: linear-gradient(180deg, #04060c 0%, #080b15 50%, #04060c 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.6);
+  position: relative;
+}
+.led-dots {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 5px 5px;
+}
+.led-text {
+  text-shadow:
+    0 0 6px currentColor,
+    0 0 18px currentColor;
+}
+.led-track {
+  display: flex;
+  width: max-content;
+  animation: tickerscroll var(--speed, 60s) linear infinite;
+}
+.led-track:hover {
+  animation-play-state: paused;
+}
+.led-track.led-reverse {
+  animation-direction: reverse;
+}
+
 /* ---------- stickers / monitor ---------- */
 .float-soft {
   animation: floatsoft 6.5s ease-in-out infinite;
@@ -324,6 +355,33 @@ body {
   );
 }
 
+/* ---------- video monocromo / film ---------- */
+.scan-sweep::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(94, 233, 255, 0.1) 48%,
+    rgba(94, 233, 255, 0.22) 50%,
+    rgba(94, 233, 255, 0.1) 52%,
+    transparent 100%
+  );
+  background-size: 100% 340px;
+  background-repeat: no-repeat;
+  animation: scansweep 7s linear infinite;
+}
+@keyframes scansweep {
+  from {
+    background-position: 0 -340px;
+  }
+  to {
+    background-position: 0 110%;
+  }
+}
+
 /* ---------- volumen ---------- */
 input[type="range"].vol {
   -webkit-appearance: none;
@@ -360,11 +418,15 @@ input[type="range"].vol::-moz-range-thumb {
   }
   .kb,
   .ticker-track,
+  .led-track,
   .led,
   .eq span,
   .glitch:hover::before,
   .glitch:hover::after {
     animation: none !important;
+  }
+  .scan-sweep::after {
+    display: none;
   }
   .rv,
   .mask-line > .mask-inner,

@@ -1,9 +1,25 @@
 import { engine } from "../audio";
-import { ACCENT_HEX, IMG, SHOWS, SHOW_IMG, currentShow, showWindow, type Show, type Track } from "../data";
+import { ACCENT_HEX, HOSTS, IMG, SHOWS, SHOW_IMG, currentShow, showWindow, type Show, type Track } from "../data";
 import { useClock, useInView } from "../hooks";
 import { CyberImg } from "./Img";
 import { IconPlay } from "./Icons";
+import { BackstageVideo } from "./Media";
 import { SectionHead } from "./Sections";
+
+/* mini avatar pop art */
+function MiniHost({ img, name, accent }: { img: string; name: string; accent: string }) {
+  return (
+    <span className="group/mini relative inline-flex flex-col items-center">
+      <span
+        className="block h-14 w-14 -rotate-3 overflow-hidden rounded-full border-2 border-snow shadow-lg transition-transform duration-300 group-hover/mini:rotate-0 group-hover/mini:scale-110"
+        style={{ boxShadow: `0 0 0 3px ${accent}33` }}
+      >
+        <CyberImg src={img} eager className="h-full w-full" />
+      </span>
+      <span className="mt-1.5 font-mono text-[8px] tracking-[0.18em] text-mut">{name}</span>
+    </span>
+  );
+}
 
 const showTrack = (s: Show): Track => ({
   pos: 0,
@@ -136,6 +152,14 @@ export function Parrilla() {
               <p className="font-mono text-[11px] tracking-[0.18em] text-mut">
                 {live.agent} — {live.director}
               </p>
+              <div className="flex items-center gap-5">
+                {HOSTS.map((h) => (
+                  <MiniHost key={h.name} img={IMG[h.name.toLowerCase() as "kiro" | "luna"]} name={h.name} accent={ACCENT_HEX[h.accent]} />
+                ))}
+                <p className="font-mono text-[10px] leading-relaxed tracking-[0.14em] text-mut">
+                  VOZ: <span className="text-snow">{live.voice}</span>
+                </p>
+              </div>
               <div className="mt-2 flex items-center gap-5">
                 <button
                   onClick={() => engine.tune(showTrack(live), { play: true })}
@@ -186,7 +210,12 @@ export function Parrilla() {
                   </h3>
                   <p className="mt-3 font-mono text-[11px] tracking-[0.22em] text-mut">{s.genre.toUpperCase()}</p>
                   <p className="mt-5 max-w-lg text-[16px] leading-relaxed text-mut">{s.desc}</p>
-                  <p className="mt-3 font-mono text-[11px] tracking-[0.16em] text-mut/80">{s.director}</p>
+                  <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2">
+                    <p className="font-mono text-[11px] tracking-[0.16em] text-mut/80">{s.director}</p>
+                    <p className="font-mono text-[10px] tracking-[0.16em]" style={{ color: hex }}>
+                      ◉ VOZ {s.voice}
+                    </p>
+                  </div>
                   <button
                     onClick={() => engine.tune(showTrack(s), { play: true })}
                     className="group/btn mt-8 flex items-center gap-3 font-display text-[12px] font-bold tracking-[0.2em] text-snow transition-colors duration-300 hover:text-neon"
@@ -206,6 +235,51 @@ export function Parrilla() {
           <span className="text-amber">◈</span> PULSO NEXAH ES EL ÚNICO PROGRAMA HÍBRIDO: HUMANOS EN LA MESA, AGENTES EN
           LA CABINA. EL RESTO DEL DIAL CORRE 100% AUTÓNOMO.
         </p>
+      </div>
+    </section>
+  );
+}
+
+/* ================= backstage · video de producción ================= */
+export function Backstage() {
+  const rv = useInView<HTMLDivElement>(0.2);
+  return (
+    <section className="relative border-t border-white/5">
+      <div className="mx-auto grid max-w-[1400px] items-stretch px-5 py-28 md:px-10 lg:grid-cols-12 lg:gap-12">
+        <div ref={rv.ref} className="flex flex-col justify-center lg:col-span-5">
+          <p className={`rv ${rv.inView ? "in" : ""} font-mono text-[11px] tracking-[0.34em] text-mag`}>
+            <span className="led mr-3 bg-mag shadow-[0_0_10px_rgba(255,77,143,0.9)]" />
+            BACK DE PRODUCCIÓN · DETRÁS DEL AIRE
+          </p>
+          <h2 className="mt-6 font-display font-extrabold uppercase leading-[0.94] tracking-tight">
+            <span className={`mask-line ${rv.inView ? "in" : ""}`}>
+              <span className="mask-inner text-5xl text-snow md:text-6xl">La sala</span>
+            </span>
+            <span className={`mask-line ${rv.inView ? "in" : ""}`} style={{ transitionDelay: "120ms" }}>
+              <span className="mask-inner glow-mag text-5xl text-mag md:text-6xl">de máquinas</span>
+            </span>
+          </h2>
+          <p className={`rv ${rv.inView ? "in" : ""} mt-7 max-w-md leading-relaxed text-mut`} style={{ transitionDelay: "200ms" }}>
+            Mientras KIRO y LUNA están al aire, el back de producción no se detiene: servidores, modelos de voz y el
+            motor de streaming trabajan en bucle. Así se ve el turno que nunca termina.
+          </p>
+          <div className={`rv ${rv.inView ? "in" : ""} mt-9 grid grid-cols-3 gap-px border-t border-white/10 pt-6`} style={{ transitionDelay: "280ms" }}>
+            {[
+              ["3", "réplicas de streaming"],
+              ["24/7", "render de voces"],
+              ["0", "operador humano de turno"],
+            ].map(([v, l]) => (
+              <div key={l}>
+                <p className="font-display text-2xl font-bold text-snow">{v}</p>
+                <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.18em] text-mut">{l}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="relative mt-14 min-h-[380px] overflow-hidden border border-white/10 lg:col-span-7 lg:mt-0 lg:min-h-[520px]">
+          <BackstageVideo />
+        </div>
       </div>
     </section>
   );
