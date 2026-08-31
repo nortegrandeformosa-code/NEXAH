@@ -3,244 +3,236 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>NEXAH Radio — La radio está siempre en movimiento</title>
-  <meta name="description" content="NEXAH Radio es la primera radio operada 100% por agentes de IA. Cero humanos en producción. Cero silencios. Cero pausas muertas." />
-  <meta name="theme-color" content="#05080D" />
+  <title>NEXAH Radio — La señal no duerme</title>
+  <meta name="description" content="Primera radio operada 100% por agentes de IA. Cero humanos en producción. Cero silencio." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <style>
-    :root{
-      --bg:#05080D; --surface:#0B111A; --raised:#101822; --line:#1B2938;
-      --ink:#F4F8FC; --dim:#9BAABC; --mute:#647487;
-      --blue:#00A8FF; --blue2:#28C4FF; --ok:#00E59B; --warn:#FFB020; --danger:#FF4D5E; --mag:#D946EF;
-    }
-    *{box-sizing:border-box;margin:0;padding:0}
-    html,body{background:var(--bg);color:var(--ink);font-family:Manrope,system-ui,sans-serif}
-    body{min-height:100vh}
-    a{color:inherit;text-decoration:none}
-    button{font:inherit;cursor:pointer}
-    .mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
-    .wrap{width:min(1180px,calc(100% - 32px));margin:0 auto}
-    .top{
-      position:sticky;top:0;z-index:40;
-      display:flex;align-items:center;gap:14px;justify-content:space-between;
-      padding:10px 18px;background:rgba(5,8,13,.92);
-      border-bottom:1px solid var(--line);backdrop-filter:blur(12px);
-    }
-    .brand{display:flex;align-items:baseline;gap:8px;letter-spacing:.04em}
-    .brand b{font-size:13px;font-weight:800}
-    .brand span{font-size:11px;color:var(--dim);font-weight:600}
-    .live{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.08em}
-    .dot{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 8px var(--ok)}
-    .dot.off{background:var(--danger);box-shadow:0 0 8px var(--danger)}
-    .top-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
-    .chip{border:1px solid var(--line);background:var(--surface);color:var(--dim);font-size:10px;padding:5px 8px;border-radius:6px;letter-spacing:.04em}
-    .chip.red{color:#ffd0d4;border-color:rgba(255,77,94,.4);background:rgba(255,77,94,.12)}
-    .chip.ok{color:#b8ffe4;border-color:rgba(0,229,155,.3)}
-    .hero{
-      position:relative;min-height:72vh;display:grid;align-items:end;
-      overflow:hidden;border-bottom:1px solid var(--line);
-    }
-    .hero video,.hero .veil{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-    .hero .veil{
-      background:
-        linear-gradient(180deg,rgba(5,8,13,.35) 0%,rgba(5,8,13,.55) 46%,rgba(5,8,13,.96) 100%),
-        radial-gradient(700px 280px at 80% 20%,rgba(0,168,255,.16),transparent 60%);
-    }
-    .hero-copy{position:relative;z-index:2;padding:48px 0 36px}
-    .hero h1{font-size:clamp(34px,6.4vw,68px);line-height:.92;letter-spacing:-.045em;max-width:14ch;font-weight:800}
-    .hero h1 em{font-style:normal;color:var(--blue2)}
-    .lede{margin-top:14px;color:var(--dim);max-width:46ch;font-size:15px}
-    .cta-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
-    .btn{border:0;border-radius:8px;padding:12px 16px;font-weight:700;font-size:13px;letter-spacing:.04em;display:inline-flex;align-items:center;gap:8px}
-    .btn.primary{background:var(--blue);color:#041018}
-    .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
-    .btn:focus-visible{outline:2px solid var(--blue2);outline-offset:3px}
-    .now{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:12px;margin-top:-18px;position:relative;z-index:3}
-    .card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px}
-    .k{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);font-family:"IBM Plex Mono",monospace}
-    .t{margin-top:6px;font-size:18px;font-weight:700}
-    .s{margin-top:4px;color:var(--dim);font-size:13px}
-    section{padding:42px 0}
-    h2{font-size:22px;letter-spacing:-.03em;margin-bottom:16px}
-    .pipe{display:grid;grid-template-columns:repeat(8,1fr);gap:8px}
-    .step{background:var(--raised);border:1px solid var(--line);border-radius:8px;padding:12px 10px;min-height:92px}
-    .step.active{border-color:rgba(0,168,255,.55);box-shadow:inset 0 0 0 1px rgba(0,168,255,.18)}
-    .step .n{color:var(--blue);font-size:11px;font-weight:700}
-    .step b{display:block;margin-top:8px;font-size:12px}
-    .step p{margin-top:4px;color:var(--mute);font-size:11px}
-    .grid2{display:grid;grid-template-columns:1.15fr .85fr;gap:14px}
-    .row{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid var(--line);font-size:13px}
-    .row:last-child{border-bottom:0}
-    .agents{display:grid;gap:8px}
-    .ag{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--raised)}
-    .ag b{font-size:13px}
-    .ag span{color:var(--dim);font-size:12px}
-    .why{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-    .why article p{color:var(--dim);font-size:13px;margin-top:8px;line-height:1.45}
-    .air{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-    .spot{min-height:86px;border:1px solid var(--line);border-radius:8px;background:linear-gradient(180deg,#121a24,#0b111a);padding:12px}
-    .spot b{display:block;font-size:12px;margin-top:16px}
-    .foot{border-top:1px solid var(--line);padding:18px 0 28px;color:var(--mute);font-size:12px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
-    .listen{position:fixed;inset:0;background:rgba(5,8,13,.86);z-index:80;display:none;align-items:center;justify-content:center;padding:24px}
-    .listen.on{display:flex}
-    .panel{width:min(420px,100%);background:#0b111a;border:1px solid var(--line);border-radius:14px;padding:22px}
-    .eq{height:28px;display:flex;align-items:flex-end;gap:3px;margin:16px 0}
-    .eq i{display:block;width:4px;background:var(--blue);height:6px;border-radius:2px;animation:eq 1s ease-in-out infinite}
-    .eq i:nth-child(odd){animation-duration:.7s}
-    @keyframes eq{50%{height:26px}100%{height:6px}}
-    .vol{width:100%;accent-color:var(--blue);margin-top:10px}
-    @media(max-width:900px){
-      .now,.grid2,.why,.air,.pipe{grid-template-columns:1fr 1fr}
-      .pipe{grid-template-columns:repeat(4,1fr)}
-    }
-    @media(max-width:640px){
-      .top-meta .hide{display:none}
-      .now,.why,.air,.pipe,.grid2{grid-template-columns:1fr}
-      .hero{min-height:64vh}
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header class="top">
-    <div class="brand"><b>NEXAH</b><span>RADIO.</span></div>
-    <div class="live"><i class="dot" id="dot"></i><span id="liveLabel">EN AIRE</span></div>
-    <div class="top-meta">
-      <span class="chip hide mono" id="clk">00:00:00</span>
-      <span class="chip hide">AGENTE · <b style="color:var(--ink)" id="agentChip">MAZCLIN</b></span>
-      <span class="chip hide">BLOQUE · NOCHE PROFUNDA</span>
-      <span class="chip red" id="sig">SEÑAL EN ESPERA</span>
+  <audio id="stream" preload="none"></audio>
+
+  <header class="topbar">
+    <a class="brand" href="#top">
+      <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true">
+        <rect x="1" y="1" width="26" height="26" rx="4" fill="#0B111A" stroke="#00A8FF"/>
+        <path d="M7 18V10l5 8 5-8v8" fill="none" stroke="#00A8FF" stroke-width="1.8"/>
+      </svg>
+      <div class="brand-name">NEXAH <span>RADIO</span></div>
+    </a>
+    <div class="rds mono" aria-live="polite">
+      <span class="rds-label">RDS</span>
+      <div class="rds-track" id="rdsLine">—</div>
     </div>
+    <div class="onair mono" id="onair"><span class="dot"></span><span>EN AIRE</span></div>
+    <button class="play-btn" id="playBtn" type="button" aria-label="Reproducir señal">PLAY</button>
   </header>
-  <section class="hero">
-    <video muted playsinline loop preload="metadata" poster="assets/studio-poster.jpg" id="bgv">
-      <source src="assets/studio-cinematic.mp4" type="video/mp4" />
-    </video>
-    <div class="veil"></div>
-    <div class="wrap hero-copy">
-      <h1>La radio está siempre <em>en movimiento.</em></h1>
-      <p class="lede">La señal no duerme. NEXAH Radio es la primera radio operada 100% por agentes de IA. Cero humanos en producción. Cero silencios. Cero pausas muertas.</p>
-      <div class="cta-row">
-        <button class="btn primary" id="listenBtn">▶ ESCUCHAR AHORA</button>
-        <a class="btn ghost" href="#pipeline">CÓMO FUNCIONA</a>
+
+  <section class="hero" id="top">
+    <canvas id="net" aria-hidden="true"></canvas>
+    <div class="hero-copy">
+      <p class="kicker mono">SEÑAL · 24/7 · SIN LOCUTOR HUMANO</p>
+      <h1>La radio está<br />siempre en <em>movimiento</em></h1>
+      <p class="claim">Primera radio operada cien por ciento por agentes de IA. Sin pausas. Sin silencio. La señal no duerme.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" id="playHero" type="button">ESCUCHAR AHORA</button>
+        <a class="btn-ghost" href="#pipeline-sec" style="display:grid;place-items:center">CÓMO FUNCIONA</a>
+      </div>
+      <div class="meta-row mono">
+        <span>AGENTE <strong id="nowAgent">CURAH</strong></span>
+        <span>BLOQUE <strong id="nowBlock">NOTICIAS</strong></span>
+        <span>ESTADO <strong>OPERATIVA</strong></span>
+      </div>
+      <div class="hidden-edu" id="edu">
+        <div class="card">
+          <h3>Qué estás oyendo</h3>
+          <p>Un pipeline de agentes genera, valida y pone al aire cada pieza. Si el validador rechaza, el ítem vuelve atrás y se reescribe. No hay humano en la consola.</p>
+        </div>
+      </div>
+    </div>
+    <div class="hero-stage">
+      <div class="studio">
+        <div class="studio-top mono"><span>STUDIO RACK 01</span><span>GAIN · LIM · AIR</span></div>
+        <div class="meters">
+          <svg class="phones" viewBox="0 0 180 180" aria-hidden="true">
+            <circle cx="90" cy="90" r="78" fill="none" stroke="#1B2938"/>
+            <path d="M40 98a50 50 0 0 1 100 0" fill="none" stroke="#00A8FF" stroke-width="6"/>
+            <rect x="32" y="96" width="18" height="36" rx="6" fill="#101822" stroke="#00A8FF"/>
+            <rect x="130" y="96" width="18" height="36" rx="6" fill="#101822" stroke="#00A8FF"/>
+            <circle cx="90" cy="88" r="16" fill="#0B111A" stroke="#28C4FF"/>
+            <path d="M70 130h40" stroke="#1B2938"/>
+          </svg>
+          <div class="vu" aria-hidden="true">
+            <span style="--h:46%"></span><span style="--h:72%"></span>
+            <span style="--h:38%"></span><span style="--h:88%"></span>
+            <span style="--h:55%"></span><span style="--h:64%"></span>
+            <span style="--h:41%"></span><span style="--h:79%"></span>
+          </div>
+        </div>
+        <div class="now-line">
+          <span>AHORA</span>
+          <strong id="nowTrack">Formosa despierta</strong>
+        </div>
       </div>
     </div>
   </section>
-  <div class="wrap">
-    <div class="now">
+
+  <section id="ahora">
+    <p class="sec-kicker mono">01 — AHORA</p>
+    <h2>Qué está pasando en la señal</h2>
+    <div class="now-grid">
       <article class="card">
-        <div class="k">Ahora</div>
-        <div class="t" id="track">Standby · NEXAH Lab</div>
-        <div class="s" id="trackSub">Play enciende capa musical + rundown. Sin autoplay.</div>
+        <p class="sec-kicker mono">BLOQUE ACTIVO</p>
+        <div class="stat">Noticias + servicio</div>
+        <p>Curah arma el corte. Mazclin controla continuidad. Kiro programa la música. Lina dispara spots.</p>
       </article>
       <article class="card">
-        <div class="k">Agente actual</div>
-        <div class="t" id="agentName">Mazclin</div>
-        <div class="s">Selector y editor musical · modelo NEXAH-1.3</div>
+        <p class="sec-kicker mono">LATENCIA DE AIRE</p>
+        <div class="stat">8 min</div>
+        <p>Del prompt aprobado a la antena. Si valida mal, no sale.</p>
       </article>
       <article class="card">
-        <div class="k">Bloque actual</div>
-        <div class="t">Noche profunda</div>
-        <div class="s">22:00–23:30 · transición controlada</div>
+        <p class="sec-kicker mono">REGLA</p>
+        <div class="stat">0 silencio</div>
+        <p>Si un bloque cae, entra el buffer de playlist. La señal no se apaga.</p>
       </article>
     </div>
-    <section id="pipeline">
-      <h2>Pipeline mutante</h2>
-      <div class="pipe" id="pipe"></div>
-    </section>
-    <section>
-      <div class="grid2">
-        <article class="card">
-          <h2>Parrilla</h2>
-          <div id="grid"></div>
-        </article>
-        <article class="card">
-          <h2>Agentes</h2>
-          <div class="agents" id="ags"></div>
-        </article>
-      </div>
-    </section>
-    <section>
-      <h2>Por qué existe NEXAH</h2>
-      <div class="why">
-        <article class="card"><div class="k">El problema</div><p>La radio se apaga cuando no hay operador. Silencios, rotación muerta, pauta que no mira el aire real.</p></article>
-        <article class="card"><div class="k">Qué no es</div><p>No es playlist infinita. No es locutor enlatado. No es un stream decorativo.</p></article>
-        <article class="card"><div class="k">Qué resuelve</div><p>Una infraestructura agentica que observa, decide, valida y sale al aire sin huecos.</p></article>
-      </div>
-    </section>
-    <section>
-      <h2>Aire comercial</h2>
-      <div class="air">
-        <div class="spot"><div class="k">Spot</div><b>Pauta dinámica</b></div>
-        <div class="spot"><div class="k">Partner</div><b>Cobranza / Nexus</b></div>
-        <div class="spot"><div class="k">Cápsula</div><b>Clima y cortes</b></div>
-        <div class="spot"><div class="k">Ident</div><b>NEXAH sweeper</b></div>
-      </div>
-    </section>
-    <footer class="foot">
-      <span>NEXAH Radio Lab · Formosa, AR</span>
-      <span class="mono">sin autoplay · encoder propio pendiente</span>
-    </footer>
-  </div>
-  <div class="listen" id="modal" role="dialog" aria-modal="true" aria-labelledby="ml">
-    <div class="panel">
-      <div class="k">Control de aire</div>
-      <h3 id="ml" style="margin-top:8px">Escuchar NEXAH</h3>
-      <p class="s">La señal arranca cuando vos lo pedís. El video de estudio no tiene audio.</p>
-      <div class="eq" id="eq" hidden></div>
-      <input class="vol" id="vol" type="range" min="0" max="1" step="0.01" value="0.82" />
-      <div class="cta-row">
-        <button class="btn primary" id="toggle">▶ PLAY</button>
-        <button class="btn ghost" id="close">CERRAR</button>
-      </div>
+  </section>
+
+  <section id="pipeline-sec">
+    <p class="sec-kicker mono">02 — CÓMO FUNCIONA</p>
+    <h2>Del prompt cero a la antena</h2>
+    <div class="flow">
+      <article class="step" data-i="0"><div class="n mono">01</div><h3>Prompt</h3><p>Encargo crudo. Tema, tono, duración.</p></article>
+      <article class="step" data-i="1"><div class="n mono">02</div><h3>Idea</h3><p>Ángulo y estructura del corte.</p></article>
+      <article class="step" data-i="2"><div class="n mono">03</div><h3>Validación</h3><p>Si no pasa, rebota. Rewrite.</p></article>
+      <article class="step" data-i="3"><div class="n mono">04</div><h3>Composición</h3><p>Guion + voz + cama.</p></article>
+      <article class="step" data-i="4"><div class="n mono">05</div><h3>Master</h3><p>Nivel, ducking, aire.</p></article>
+      <article class="step" data-i="5"><div class="n mono">06</div><h3>Playlist</h3><p>Encaje en la parrilla.</p></article>
+      <article class="step" data-i="6"><div class="n mono">07</div><h3>Antena</h3><p>Cola de salida.</p></article>
+      <article class="step" data-i="7"><div class="n mono">08</div><h3>Aire</h3><p>RDS + señal viva.</p></article>
+    </div>
+  </section>
+
+  <section id="parrilla">
+    <p class="sec-kicker mono">03 — PARRILLA</p>
+    <h2>El día no tiene huecos</h2>
+    <div class="grid-2">
+      <article class="card"><h3>06–10 · Apertura</h3><p>Noticias NEA, clima, cortes de servicio. Curah al frente.</p></article>
+      <article class="card"><h3>10–14 · Operación</h3><p>Spots PyME, Nexus cobranza, continuidad musical de Kiro.</p></article>
+      <article class="card"><h3>14–20 · Tarde</h3><p>Titulares rotativos + publicidad local. Lina programa el inventario.</p></article>
+      <article class="card"><h3>20–06 · Señal nocturna</h3><p>Música + flashes. Nadie apaga la consola porque no hay consola humana.</p></article>
+    </div>
+  </section>
+
+  <section id="agentes">
+    <p class="sec-kicker mono">04 — AGENTES</p>
+    <h2>Quién opera, qué hace</h2>
+    <div class="agents">
+      <article class="card agent">
+        <code class="mono">CURAH</code>
+        <h3>Noticias</h3>
+        <p>Titulares, clima, servicio. Escribe y lee el bloque informativo.</p>
+      </article>
+      <article class="card agent">
+        <code class="mono">MAZCLIN</code>
+        <h3>Continuidad</h3>
+        <p>Valida tono, repetición y reglas. Si falla, no sale al aire.</p>
+      </article>
+      <article class="card agent">
+        <code class="mono">KIRO</code>
+        <h3>Música</h3>
+        <p>Arma playlist y cruces. Mantiene movimiento entre bloques.</p>
+      </article>
+      <article class="card agent">
+        <code class="mono">LINA</code>
+        <h3>Aire comercial</h3>
+        <p>Spots, inventario y disparos de publicidad.</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="dossier">
+    <p class="sec-kicker mono">05 — DOSSIER</p>
+    <h2>Qué es y qué no es</h2>
+    <div class="grid-3">
+      <article class="card">
+        <h3>Es una radio</h3>
+        <p>Señal continua, RDS, parrilla, spots y noticias. Se escucha. No se “explora”.</p>
+      </article>
+      <article class="card">
+        <h3>No es un locutor fake</h3>
+        <p>No hay humano fingiendo. Cada corte nace de un agente con rol y pasa por validador.</p>
+      </article>
+      <article class="card">
+        <h3>No es playlist infinita</h3>
+        <p>Hay edición, rechazo y rewrite. Lo que no cumple regla no llega a antena.</p>
+      </article>
+    </div>
+  </section>
+
+  <div class="ticker-wrap" aria-hidden="true">
+    <div class="ticker">
+      <span>FORMOSA — mínima 12° / máxima 24°</span>
+      <span>NEXAH RADIO — la señal no duerme</span>
+      <span>BANCO FORMOSA — aviso al aire</span>
+      <span>NEXUS COBRANZA — bloque automatizado</span>
+      <span>SIN SILENCIO — buffer activo</span>
+      <span>FORMOSA — mínima 12° / máxima 24°</span>
+      <span>NEXAH RADIO — la señal no duerme</span>
+      <span>BANCO FORMOSA — aviso al aire</span>
+      <span>NEXUS COBRANZA — bloque automatizado</span>
+      <span>SIN SILENCIO — buffer activo</span>
     </div>
   </div>
-  <audio id="audio" preload="none"></audio>
-  <script>
-    const STREAMS=["https://ice4.somafm.com/groovesalad-128-mp3","https://ice2.somafm.com/groovesalad-128-mp3"];
-    const pipe=["Prompt|Brief de aire","Idea|Estructura","Validación|Supervisor","Composición|Locución","Masterización|Nivel / EQ","Playlist|Secuencia","Antena|Encoder","Al aire|Transmisión"];
-    const parrilla=[["01:00–02:45","Noticias cortas"],["02:45–04:00","Música nueva"],["04:00–05:30","Cobranzas"],["05:30–06:00","Cobranzas / spots"],["06:00–07:00","Clima extendido"],["06:00–07:00","Cortes / transiciones"]];
-    const agents=[["CURAH","Clasificador de señal"],["MAZCLIN","Selector y editor musical"],["KIRO","Técnico de audio"],["LINA","Calidad y estadísticas"]];
-    const rundown=["Lowlight Drive · Mazclin","Ident NEXAH · 8s","Cápsula noticias","Bloque B · contraste","Sweeper · en movimiento"];
-    document.getElementById("pipe").innerHTML=pipe.map((p,i)=>{const [a,b]=p.split("|");return `<div class="step${i===2?" active":""}"><div class="n mono">${i+1}</div><b>${a}</b><p>${b}</p></div>`;}).join("");
-    document.getElementById("grid").innerHTML=parrilla.map(r=>`<div class="row"><span class="mono" style="color:var(--mute)">${r[0]}</span><span>${r[1]}</span></div>`).join("");
-    document.getElementById("ags").innerHTML=agents.map(a=>`<div class="ag"><b>${a[0]}</b><span>${a[1]}</span></div>`).join("");
-    const eq=document.getElementById("eq"); eq.innerHTML=Array.from({length:18},()=>"<i></i>").join("");
-    const audio=document.getElementById("audio"); const vol=document.getElementById("vol"); const bgv=document.getElementById("bgv");
-    audio.volume=vol.value; vol.oninput=e=>audio.volume=+e.target.value;
-    bgv.muted=true; bgv.play().catch(()=>{});
-    const clk=()=>document.getElementById("clk").textContent=new Date().toLocaleTimeString("es-AR",{hour12:false});
-    clk(); setInterval(clk,1000);
-    const modal=document.getElementById("modal");
-    document.getElementById("listenBtn").onclick=()=>modal.classList.add("on");
-    document.getElementById("close").onclick=()=>modal.classList.remove("on");
-    let on=false,idx=0,tick;
-    const setLive=v=>{
-      document.getElementById("dot").classList.toggle("off",!v);
-      document.getElementById("liveLabel").textContent=v?"EN AIRE":"PAUSA";
-      document.getElementById("sig").textContent=v?"SEÑAL ESTABLE":"SEÑAL EN ESPERA";
-      document.getElementById("sig").className=v?"chip ok":"chip red";
-    };
-    document.getElementById("toggle").onclick=async()=>{
-      if(!on){
-        let ok=false;
-        for(const src of STREAMS){ audio.src=src; try{ await audio.play(); ok=true; break;}catch(e){} }
-        if(!ok){ document.getElementById("trackSub").textContent="Stream caído. Reintentá."; return; }
-        on=true; eq.hidden=false;
-        document.getElementById("toggle").textContent="❚❚ PAUSA";
-        document.getElementById("track").textContent=rundown[0];
-        document.getElementById("trackSub").textContent="Motor de programación activo";
-        setLive(true);
-        tick=setInterval(()=>{ idx=(idx+1)%rundown.length; document.getElementById("track").textContent=rundown[idx]; },12000);
-      } else {
-        audio.pause(); on=false; eq.hidden=true; clearInterval(tick);
-        document.getElementById("toggle").textContent="▶ PLAY";
-        document.getElementById("track").textContent="Standby · NEXAH Lab";
-        document.getElementById("trackSub").textContent="Play enciende capa musical + rundown. Sin autoplay.";
-        setLive(false);
-      }
-    };
-  </script>
+
+  <section id="aire">
+    <p class="sec-kicker mono">06 — AIRE COMERCIAL</p>
+    <h2>Inventario en rotación</h2>
+    <div class="spots">
+      <article class="card spot"><small class="mono">SPOT 01</small><h3>Banco Formosa</h3><p>Aviso institucional. 25"</p></article>
+      <article class="card spot"><small class="mono">SPOT 02</small><h3>Nexus cobranza</h3><p>Bloque operativo NEXAH. 20"</p></article>
+      <article class="card spot"><small class="mono">SPOT 03</small><h3>PyMEs NEA</h3><p>Inventario local rotativo. 15"</p></article>
+    </div>
+  </section>
+
+  <footer>
+    <span>NEXAH RADIO · La radio está siempre en movimiento</span>
+    <span class="mono">SIN AUTOPLAY · PLAY MANUAL</span>
+  </footer>
+
+  <aside class="pipeline" aria-label="Pipeline de contenido">
+    <header>
+      <h2 class="mono">PIPELINE</h2>
+      <span class="status mono" id="pipeStatus">PROMPT</span>
+      <button class="pipe-toggle mono" id="pipeToggle" type="button">MIN</button>
+    </header>
+    <div class="rail">
+      <svg viewBox="0 0 296 168" aria-hidden="true">
+        <path d="M18 28h232v56H92v56H18" fill="none" stroke="#1B2938" stroke-width="2"/>
+        <g fill="#0B111A" stroke="#1B2938">
+          <circle cx="18" cy="28" r="6"/><circle cx="92" cy="28" r="6"/>
+          <circle cx="166" cy="28" r="6"/><circle cx="250" cy="28" r="6"/>
+          <circle cx="250" cy="84" r="6"/><circle cx="166" cy="84" r="6"/>
+          <circle cx="92" cy="140" r="6"/><circle cx="18" cy="140" r="6"/>
+        </g>
+        <g fill="#647487" font-size="8" font-family="IBM Plex Mono, monospace">
+          <text x="18" y="16" text-anchor="middle">P</text>
+          <text x="92" y="16" text-anchor="middle">I</text>
+          <text x="166" y="16" text-anchor="middle">V</text>
+          <text x="250" y="16" text-anchor="middle">C</text>
+          <text x="250" y="102" text-anchor="middle">M</text>
+          <text x="166" y="102" text-anchor="middle">PL</text>
+          <text x="92" y="158" text-anchor="middle">ANT</text>
+          <text x="18" y="158" text-anchor="middle">AIR</text>
+        </g>
+      </svg>
+      <div class="token" id="token"><span id="tokenIcon"></span></div>
+    </div>
+    <div class="legend mono"><span>PROMPT</span><span>AIRE</span></div>
+  </aside>
+
+  <script src="app.js"></script>
 </body>
 </html>
