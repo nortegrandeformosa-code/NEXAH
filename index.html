@@ -3,109 +3,108 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>NEXAH Radio Lab — La radio está siempre en movimiento</title>
-  <meta name="description" content="Primera radio operada 100% por agentes de IA. Señal en movimiento." />
+  <title>NEXAH Radio Lab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <style>
-    :root {
-      --bg: #05080D;
-      --surface: #0B111A;
-      --raised: #101822;
-      --border: #1B2938;
-      --text: #F4F8FC;
-      --sec: #9BAABC;
-      --muted: #647487;
-      --blue: #00A8FF;
-      --green: #00E59B;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { background: var(--bg); color: var(--text); font-family: Inter, system-ui, sans-serif; min-height: 100%; }
-    body { display: flex; flex-direction: column; min-height: 100vh; }
-    header {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 20px 28px; border-bottom: 1px solid var(--border);
-    }
-    .brand { letter-spacing: .18em; font-size: 12px; font-weight: 700; }
-    .live { display: flex; gap: 8px; align-items: center; color: var(--sec); font-size: 12px; }
-    .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); }
-    .dot.on { background: var(--green); box-shadow: 0 0 10px var(--green); }
-    main { flex: 1; display: grid; place-items: center; padding: 48px 24px 80px; }
-    .hero { max-width: 720px; width: 100%; }
-    h1 { font-size: clamp(32px, 6vw, 56px); line-height: 1.05; font-weight: 600; letter-spacing: -.03em; }
-    .tag { margin-top: 16px; color: var(--sec); font-size: 16px; max-width: 42ch; }
-    .player {
-      margin-top: 36px; background: var(--surface); border: 1px solid var(--border);
-      border-radius: 16px; padding: 18px; display: flex; gap: 16px; align-items: center;
-    }
-    button.play {
-      width: 64px; height: 64px; border: 0; border-radius: 50%;
-      background: var(--blue); color: #031018; font-size: 22px; cursor: pointer; flex-shrink: 0;
-    }
-    button.play:hover { filter: brightness(1.08); }
-    .meta { flex: 1; min-width: 0; }
-    .meta strong { display: block; font-size: 15px; }
-    .meta span { display: block; margin-top: 4px; color: var(--muted); font-size: 13px; }
-    input[type=range] { width: 100%; margin-top: 12px; accent-color: var(--blue); }
-    footer { padding: 16px 28px 24px; color: var(--muted); font-size: 12px; border-top: 1px solid var(--border); }
-    .note { margin-top: 14px; color: var(--muted); font-size: 12px; }
+    :root{--bg:#07090c;--ink:#e8edf2;--dim:#8b97a6;--line:rgba(232,237,242,.08);--blue:#3aa0ff;--ok:#6ee7b7;--r:28px}
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{background:var(--bg);color:var(--ink);font-family:"Instrument Sans",system-ui,sans-serif}
+    body{min-height:100vh;background:radial-gradient(900px 420px at 18% -10%,rgba(58,160,255,.12),transparent 55%),var(--bg)}
+    .wrap{max-width:1080px;margin:0 auto;padding:28px 22px 56px}
+    header{display:flex;justify-content:space-between;align-items:center;margin-bottom:36px}
+    .mark{font-size:12px;letter-spacing:.28em;font-weight:600}
+    .clock{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--dim)}
+    .chassis{border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015));border-radius:36px;padding:28px;box-shadow:0 30px 80px rgba(0,0,0,.35)}
+    h1{font-size:clamp(34px,6vw,64px);letter-spacing:-.04em;line-height:.95;font-weight:600;max-width:14ch}
+    .lede{margin-top:16px;color:var(--dim);max-width:40ch;font-size:16px}
+    .desk{margin-top:32px;display:grid;grid-template-columns:92px 1fr;gap:18px}
+    .play{width:92px;height:92px;border:0;border-radius:28px;background:var(--ink);color:#0b0d10;font-size:28px;cursor:pointer}
+    .play.on{background:var(--blue);color:#061018}
+    .now{border-radius:var(--r);border:1px solid var(--line);padding:18px 20px;background:#0c1015}
+    .k{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--dim);letter-spacing:.12em;text-transform:uppercase}
+    .t{margin-top:6px;font-size:22px;font-weight:600}
+    .s{margin-top:4px;color:var(--dim);font-size:14px}
+    .vol{margin-top:14px;width:100%;accent-color:var(--blue)}
+    .engine{margin-top:16px;display:grid;grid-template-columns:1.2fr .8fr;gap:16px}
+    .card{border-radius:24px;border:1px solid var(--line);background:#0b0e12;padding:18px}
+    .row{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px}
+    .row:last-child{border-bottom:0}
+    .pill{font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--ok);border:1px solid rgba(110,231,183,.25);padding:3px 8px;border-radius:999px}
+    .ag{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--dim);padding:6px 0}
+    .ag b{color:var(--ink);font-weight:500}
+    footer{margin-top:28px;color:var(--dim);font-size:12px}
+    @media(max-width:720px){.desk,.engine{grid-template-columns:1fr}.play{width:100%;height:72px;border-radius:22px}}
   </style>
 </head>
 <body>
-  <header>
-    <div class="brand">NEXAH RADIO LAB</div>
-    <div class="live"><span class="dot" id="dot"></span><span id="status">En espera</span></div>
-  </header>
-  <main>
-    <section class="hero">
+  <div class="wrap">
+    <header>
+      <div class="mark">NEXAH · RADIO LAB</div>
+      <div class="clock" id="clk">00:00:00</div>
+    </header>
+    <section class="chassis">
       <h1>La radio está siempre en movimiento.</h1>
-      <p class="tag">Primera señal operada 100% por agentes de IA. Sin humanos en producción. Sin silencio.</p>
-      <div class="player">
-        <button class="play" id="play" aria-label="Reproducir">▶</button>
-        <div class="meta">
-          <strong id="title">Capa musical de laboratorio</strong>
-          <span id="sub">Play para escuchar. Sin autoplay.</span>
-          <input type="range" id="vol" min="0" max="1" step="0.01" value="0.8" />
+      <p class="lede">Señal agentica. El director arma el aire. El supervisor valida. El operador no deja silencio.</p>
+      <div class="desk">
+        <button class="play" id="play" aria-label="Play">▶</button>
+        <div class="now">
+          <div class="k" id="st">Motor en standby</div>
+          <div class="t" id="title">NEXAH Radio Lab</div>
+          <div class="s" id="sub">Play enciende capa musical + rundown</div>
+          <input class="vol" id="vol" type="range" min="0" max="1" step="0.01" value="0.82" />
         </div>
       </div>
-      <p class="note">Stream de prueba (capa musical). La señal agentica propia entra cuando el encoder esté online.</p>
+      <div class="engine">
+        <div class="card">
+          <div class="k" style="margin-bottom:8px">Rundown · motor de programación</div>
+          <div id="run"></div>
+        </div>
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <div class="k">Agentes</div><span class="pill" id="pill">IDLE</span>
+          </div>
+          <div id="ags"></div>
+        </div>
+      </div>
     </section>
-  </main>
-  <footer>NEXAH · Radio Lab · señal de prueba</footer>
-  <audio id="audio" preload="none" crossorigin="anonymous"></audio>
+    <footer>Lab signal · sin autoplay · encoder propio pendiente</footer>
+  </div>
+  <audio id="audio" preload="none"></audio>
   <script>
-    const STREAM = "https://ice4.somafm.com/groovesalad-128-mp3";
-    const audio = document.getElementById("audio");
-    const play = document.getElementById("play");
-    const dot = document.getElementById("dot");
-    const status = document.getElementById("status");
-    const title = document.getElementById("title");
-    const sub = document.getElementById("sub");
-    audio.src = STREAM;
-    document.getElementById("vol").addEventListener("input", e => { audio.volume = Number(e.target.value); });
-    audio.volume = 0.8;
-    let on = false;
-    play.addEventListener("click", async () => {
-      if (!on) {
-        try {
-          await audio.play();
-          on = true;
-          play.textContent = "❚❚";
-          dot.classList.add("on");
-          status.textContent = "Al aire";
-          title.textContent = "NEXAH Radio Lab";
-          sub.textContent = "Señal de laboratorio en curso";
-        } catch (err) {
-          status.textContent = "Error de stream";
-          sub.textContent = "No se pudo abrir la capa musical.";
-        }
+    const STREAMS=["https://ice4.somafm.com/groovesalad-128-mp3","https://ice2.somafm.com/groovesalad-128-mp3","https://ice6.somafm.com/gsclassic-128-mp3"];
+    const rundown=[["COLD OPEN","Ident NEXAH · 8s"],["MUSICA","Bloque A · corriente"],["LOCUCION","Texto fresco del director"],["NOTICIAS","Capsula 60s"],["MUSICA","Bloque B · contraste"],["PAUTA","Perfil dinamico"],["SWEEPER","La radio esta siempre en movimiento"]];
+    const agents=[["Director","elige estructura"],["Locutor","solo texto nuevo"],["Musicalizador","bloques + contraste"],["Supervisor","tope 3 / backup"],["Control de aire","vigila silencio"]];
+    const audio=document.getElementById("audio"),play=document.getElementById("play");
+    const st=document.getElementById("st"),title=document.getElementById("title"),sub=document.getElementById("sub"),pill=document.getElementById("pill");
+    document.getElementById("vol").oninput=e=>audio.volume=+e.target.value; audio.volume=.82;
+    let on=false,idx=0,tick;
+    const clock=()=>document.getElementById("clk").textContent=new Date().toLocaleTimeString("es-AR",{hour12:false});
+    clock(); setInterval(clock,1000);
+    function draw(active){
+      document.getElementById("run").innerHTML=rundown.map((r,i)=>{
+        const cur=i===idx%rundown.length;
+        return `<div class="row"><span>${r[0]}</span><span style="color:${cur&&active?'#3aa0ff':'#8b97a6'}">${cur&&active?'AL AIRE · ':''}${r[1]}</span></div>`;
+      }).join("");
+      document.getElementById("ags").innerHTML=agents.map(a=>`<div class="ag"><b>${a[0]}</b><span>${active?a[1]:"en espera"}</span></div>`).join("");
+    }
+    draw(false);
+    async function start(){ for(const src of STREAMS){ audio.src=src; try{ await audio.play(); return true;}catch(e){} } return false; }
+    play.onclick=async()=>{
+      if(!on){
+        if(!(await start())){ st.textContent="Stream caido"; sub.textContent="Reintenta"; return; }
+        on=true; play.classList.add("on"); play.textContent="❚❚";
+        st.textContent="Motor de programacion activo"; pill.textContent="LIVE";
+        title.textContent=rundown[idx][0]+" · "+rundown[idx][1];
+        sub.textContent="Director + supervisor en bucle"; draw(true);
+        tick=setInterval(()=>{ idx=(idx+1)%rundown.length; title.textContent=rundown[idx][0]+" · "+rundown[idx][1]; draw(true); },14000);
       } else {
-        audio.pause();
-        on = false;
-        play.textContent = "▶";
-        dot.classList.remove("on");
-        status.textContent = "En espera";
-        sub.textContent = "Play para escuchar. Sin autoplay.";
+        audio.pause(); on=false; play.classList.remove("on"); play.textContent="▶";
+        st.textContent="Motor en standby"; title.textContent="NEXAH Radio Lab";
+        sub.textContent="Play enciende capa musical + rundown"; pill.textContent="IDLE";
+        clearInterval(tick); draw(false);
       }
-    });
+    };
   </script>
 </body>
 </html>
