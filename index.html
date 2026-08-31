@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NEXAH Radio Lab — La radio está siempre en movimiento</title>
+  <meta name="description" content="Primera radio operada 100% por agentes de IA. Señal en movimiento." />
+  <style>
+    :root {
+      --bg: #05080D;
+      --surface: #0B111A;
+      --raised: #101822;
+      --border: #1B2938;
+      --text: #F4F8FC;
+      --sec: #9BAABC;
+      --muted: #647487;
+      --blue: #00A8FF;
+      --green: #00E59B;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { background: var(--bg); color: var(--text); font-family: Inter, system-ui, sans-serif; min-height: 100%; }
+    body { display: flex; flex-direction: column; min-height: 100vh; }
+    header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 20px 28px; border-bottom: 1px solid var(--border);
+    }
+    .brand { letter-spacing: .18em; font-size: 12px; font-weight: 700; }
+    .live { display: flex; gap: 8px; align-items: center; color: var(--sec); font-size: 12px; }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); }
+    .dot.on { background: var(--green); box-shadow: 0 0 10px var(--green); }
+    main { flex: 1; display: grid; place-items: center; padding: 48px 24px 80px; }
+    .hero { max-width: 720px; width: 100%; }
+    h1 { font-size: clamp(32px, 6vw, 56px); line-height: 1.05; font-weight: 600; letter-spacing: -.03em; }
+    .tag { margin-top: 16px; color: var(--sec); font-size: 16px; max-width: 42ch; }
+    .player {
+      margin-top: 36px; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 16px; padding: 18px; display: flex; gap: 16px; align-items: center;
+    }
+    button.play {
+      width: 64px; height: 64px; border: 0; border-radius: 50%;
+      background: var(--blue); color: #031018; font-size: 22px; cursor: pointer; flex-shrink: 0;
+    }
+    button.play:hover { filter: brightness(1.08); }
+    .meta { flex: 1; min-width: 0; }
+    .meta strong { display: block; font-size: 15px; }
+    .meta span { display: block; margin-top: 4px; color: var(--muted); font-size: 13px; }
+    input[type=range] { width: 100%; margin-top: 12px; accent-color: var(--blue); }
+    footer { padding: 16px 28px 24px; color: var(--muted); font-size: 12px; border-top: 1px solid var(--border); }
+    .note { margin-top: 14px; color: var(--muted); font-size: 12px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">NEXAH RADIO LAB</div>
+    <div class="live"><span class="dot" id="dot"></span><span id="status">En espera</span></div>
+  </header>
+  <main>
+    <section class="hero">
+      <h1>La radio está siempre en movimiento.</h1>
+      <p class="tag">Primera señal operada 100% por agentes de IA. Sin humanos en producción. Sin silencio.</p>
+      <div class="player">
+        <button class="play" id="play" aria-label="Reproducir">▶</button>
+        <div class="meta">
+          <strong id="title">Capa musical de laboratorio</strong>
+          <span id="sub">Play para escuchar. Sin autoplay.</span>
+          <input type="range" id="vol" min="0" max="1" step="0.01" value="0.8" />
+        </div>
+      </div>
+      <p class="note">Stream de prueba (capa musical). La señal agentica propia entra cuando el encoder esté online.</p>
+    </section>
+  </main>
+  <footer>NEXAH · Radio Lab · señal de prueba</footer>
+  <audio id="audio" preload="none" crossorigin="anonymous"></audio>
+  <script>
+    const STREAM = "https://ice4.somafm.com/groovesalad-128-mp3";
+    const audio = document.getElementById("audio");
+    const play = document.getElementById("play");
+    const dot = document.getElementById("dot");
+    const status = document.getElementById("status");
+    const title = document.getElementById("title");
+    const sub = document.getElementById("sub");
+    audio.src = STREAM;
+    document.getElementById("vol").addEventListener("input", e => { audio.volume = Number(e.target.value); });
+    audio.volume = 0.8;
+    let on = false;
+    play.addEventListener("click", async () => {
+      if (!on) {
+        try {
+          await audio.play();
+          on = true;
+          play.textContent = "❚❚";
+          dot.classList.add("on");
+          status.textContent = "Al aire";
+          title.textContent = "NEXAH Radio Lab";
+          sub.textContent = "Señal de laboratorio en curso";
+        } catch (err) {
+          status.textContent = "Error de stream";
+          sub.textContent = "No se pudo abrir la capa musical.";
+        }
+      } else {
+        audio.pause();
+        on = false;
+        play.textContent = "▶";
+        dot.classList.remove("on");
+        status.textContent = "En espera";
+        sub.textContent = "Play para escuchar. Sin autoplay.";
+      }
+    });
+  </script>
+</body>
+</html>
