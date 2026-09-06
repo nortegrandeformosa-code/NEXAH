@@ -3,236 +3,124 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>NEXAH Radio — La señal no duerme</title>
-  <meta name="description" content="Primera radio operada 100% por agentes de IA. Cero humanos en producción. Cero silencio." />
+  <title>NEXAH Radio — La radio está siempre en movimiento</title>
+  <meta name="description" content="Radio operada por agentes. Señal 24/7 desde Formosa. Vero, Diego, Pablo y Sofi en consola." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <audio id="stream" preload="none"></audio>
 
   <header class="topbar">
-    <a class="brand" href="#top">
-      <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true">
-        <rect x="1" y="1" width="26" height="26" rx="4" fill="#0B111A" stroke="#00A8FF"/>
-        <path d="M7 18V10l5 8 5-8v8" fill="none" stroke="#00A8FF" stroke-width="1.8"/>
+    <a class="brand" href="#aire">
+      <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true">
+        <rect x="1" y="1" width="24" height="24" rx="3" fill="#0B111A" stroke="#00A8FF"/>
+        <path d="M7 17V9l5 8 5-8v8" fill="none" stroke="#00A8FF" stroke-width="1.7"/>
       </svg>
-      <div class="brand-name">NEXAH <span>RADIO</span></div>
+      <span>NEXAH <b>RADIO</b></span>
     </a>
-    <div class="rds mono" aria-live="polite">
-      <span class="rds-label">RDS</span>
-      <div class="rds-track" id="rdsLine">—</div>
+    <div class="rds" aria-live="polite">
+      <span class="tag">RDS</span>
+      <div id="rdsLine">Cargando señal…</div>
     </div>
-    <div class="onair mono" id="onair"><span class="dot"></span><span>EN AIRE</span></div>
-    <button class="play-btn" id="playBtn" type="button" aria-label="Reproducir señal">PLAY</button>
+    <div class="clock mono" id="clock">—</div>
+    <div class="onair mono" id="onair"><i></i><span>EN AIRE</span></div>
+    <button class="play" id="playBtn" type="button">PLAY</button>
   </header>
 
-  <section class="hero" id="top">
-    <canvas id="net" aria-hidden="true"></canvas>
-    <div class="hero-copy">
-      <p class="kicker mono">SEÑAL · 24/7 · SIN LOCUTOR HUMANO</p>
-      <h1>La radio está<br />siempre en <em>movimiento</em></h1>
-      <p class="claim">Primera radio operada cien por ciento por agentes de IA. Sin pausas. Sin silencio. La señal no duerme.</p>
-      <div class="hero-actions">
-        <button class="btn-primary" id="playHero" type="button">ESCUCHAR AHORA</button>
-        <a class="btn-ghost" href="#pipeline-sec" style="display:grid;place-items:center">CÓMO FUNCIONA</a>
-      </div>
-      <div class="meta-row mono">
-        <span>AGENTE <strong id="nowAgent">CURAH</strong></span>
-        <span>BLOQUE <strong id="nowBlock">NOTICIAS</strong></span>
-        <span>ESTADO <strong>OPERATIVA</strong></span>
-      </div>
-      <div class="hidden-edu" id="edu">
-        <div class="card">
-          <h3>Qué estás oyendo</h3>
-          <p>Un pipeline de agentes genera, valida y pone al aire cada pieza. Si el validador rechaza, el ítem vuelve atrás y se reescribe. No hay humano en la consola.</p>
-        </div>
-      </div>
-    </div>
-    <div class="hero-stage">
-      <div class="studio">
-        <div class="studio-top mono"><span>STUDIO RACK 01</span><span>GAIN · LIM · AIR</span></div>
-        <div class="meters">
-          <svg class="phones" viewBox="0 0 180 180" aria-hidden="true">
-            <circle cx="90" cy="90" r="78" fill="none" stroke="#1B2938"/>
-            <path d="M40 98a50 50 0 0 1 100 0" fill="none" stroke="#00A8FF" stroke-width="6"/>
-            <rect x="32" y="96" width="18" height="36" rx="6" fill="#101822" stroke="#00A8FF"/>
-            <rect x="130" y="96" width="18" height="36" rx="6" fill="#101822" stroke="#00A8FF"/>
-            <circle cx="90" cy="88" r="16" fill="#0B111A" stroke="#28C4FF"/>
-            <path d="M70 130h40" stroke="#1B2938"/>
-          </svg>
-          <div class="vu" aria-hidden="true">
-            <span style="--h:46%"></span><span style="--h:72%"></span>
-            <span style="--h:38%"></span><span style="--h:88%"></span>
-            <span style="--h:55%"></span><span style="--h:64%"></span>
-            <span style="--h:41%"></span><span style="--h:79%"></span>
+  <nav class="subnav">
+    <a href="#aire">Aire</a>
+    <a href="#feed">Mesa</a>
+    <a href="#parrilla">Parrilla</a>
+    <a href="#archivo">Archivo</a>
+    <a href="#agentes">Piso</a>
+    <span class="src-pill mono" id="srcPill">FUENTE · INICIAL</span>
+  </nav>
+
+  <main>
+    <section class="stage" id="aire">
+      <article class="now">
+        <figure class="art">
+          <img id="nowArt" alt="" />
+          <figcaption class="mono" id="nowSrc">MOTOR · ITUNES</figcaption>
+        </figure>
+        <div class="now-body">
+          <p class="kicker mono">AHORA · <span id="nowAgent">VERO</span> · <span id="nowBlock">NOTICIAS</span></p>
+          <h1 id="nowTitle">Formosa despierta</h1>
+          <p class="lead" id="nowLead">Corte de apertura. Clima, servicio y titulares NEA.</p>
+          <div class="meta mono">
+            <span id="nowNext">SIGUE · —</span>
+            <span id="nowWx">CLIMA · —</span>
+            <span>FORMOSA · AR</span>
           </div>
         </div>
-        <div class="now-line">
-          <span>AHORA</span>
-          <strong id="nowTrack">Formosa despierta</strong>
+      </article>
+
+      <aside class="rack">
+        <h2 class="mono">COLA DE AIRE</h2>
+        <ol id="queue"></ol>
+        <div class="wx" id="wxBox">
+          <span class="mono">OPEN-METEO</span>
+          <strong id="wxTemp">—</strong>
+          <em id="wxDesc">Formosa</em>
+        </div>
+      </aside>
+    </section>
+
+    <section id="feed">
+      <div class="sec-head">
+        <div>
+          <p class="kicker mono">MESA · FEED VIVO</p>
+          <h2>Lo que entra a antena</h2>
+        </div>
+        <p class="note">Noticias por motor externo. Temas por iTunes. Spots y validación por agentes.</p>
+      </div>
+      <div class="feed" id="feedGrid"></div>
+    </section>
+
+    <section id="parrilla">
+      <div class="sec-head">
+        <div>
+          <p class="kicker mono">PARRILLA</p>
+          <h2>El día no tiene huecos</h2>
         </div>
       </div>
-    </div>
-  </section>
+      <div class="grid-4" id="dayparts"></div>
+    </section>
 
-  <section id="ahora">
-    <p class="sec-kicker mono">01 — AHORA</p>
-    <h2>Qué está pasando en la señal</h2>
-    <div class="now-grid">
-      <article class="card">
-        <p class="sec-kicker mono">BLOQUE ACTIVO</p>
-        <div class="stat">Noticias + servicio</div>
-        <p>Curah arma el corte. Mazclin controla continuidad. Kiro programa la música. Lina dispara spots.</p>
-      </article>
-      <article class="card">
-        <p class="sec-kicker mono">LATENCIA DE AIRE</p>
-        <div class="stat">8 min</div>
-        <p>Del prompt aprobado a la antena. Si valida mal, no sale.</p>
-      </article>
-      <article class="card">
-        <p class="sec-kicker mono">REGLA</p>
-        <div class="stat">0 silencio</div>
-        <p>Si un bloque cae, entra el buffer de playlist. La señal no se apaga.</p>
-      </article>
-    </div>
-  </section>
+    <section id="archivo">
+      <div class="sec-head">
+        <div>
+          <p class="kicker mono">ARCHIVO</p>
+          <h2>Cortes listos</h2>
+        </div>
+      </div>
+      <div class="archive" id="archiveGrid"></div>
+    </section>
 
-  <section id="pipeline-sec">
-    <p class="sec-kicker mono">02 — CÓMO FUNCIONA</p>
-    <h2>Del prompt cero a la antena</h2>
-    <div class="flow">
-      <article class="step" data-i="0"><div class="n mono">01</div><h3>Prompt</h3><p>Encargo crudo. Tema, tono, duración.</p></article>
-      <article class="step" data-i="1"><div class="n mono">02</div><h3>Idea</h3><p>Ángulo y estructura del corte.</p></article>
-      <article class="step" data-i="2"><div class="n mono">03</div><h3>Validación</h3><p>Si no pasa, rebota. Rewrite.</p></article>
-      <article class="step" data-i="3"><div class="n mono">04</div><h3>Composición</h3><p>Guion + voz + cama.</p></article>
-      <article class="step" data-i="4"><div class="n mono">05</div><h3>Master</h3><p>Nivel, ducking, aire.</p></article>
-      <article class="step" data-i="5"><div class="n mono">06</div><h3>Playlist</h3><p>Encaje en la parrilla.</p></article>
-      <article class="step" data-i="6"><div class="n mono">07</div><h3>Antena</h3><p>Cola de salida.</p></article>
-      <article class="step" data-i="7"><div class="n mono">08</div><h3>Aire</h3><p>RDS + señal viva.</p></article>
-    </div>
-  </section>
+    <section id="agentes">
+      <div class="sec-head">
+        <div>
+          <p class="kicker mono">PISO</p>
+          <h2>Quién opera</h2>
+        </div>
+      </div>
+      <div class="agents" id="agentGrid"></div>
+    </section>
+  </main>
 
-  <section id="parrilla">
-    <p class="sec-kicker mono">03 — PARRILLA</p>
-    <h2>El día no tiene huecos</h2>
-    <div class="grid-2">
-      <article class="card"><h3>06–10 · Apertura</h3><p>Noticias NEA, clima, cortes de servicio. Curah al frente.</p></article>
-      <article class="card"><h3>10–14 · Operación</h3><p>Spots PyME, Nexus cobranza, continuidad musical de Kiro.</p></article>
-      <article class="card"><h3>14–20 · Tarde</h3><p>Titulares rotativos + publicidad local. Lina programa el inventario.</p></article>
-      <article class="card"><h3>20–06 · Señal nocturna</h3><p>Música + flashes. Nadie apaga la consola porque no hay consola humana.</p></article>
-    </div>
-  </section>
-
-  <section id="agentes">
-    <p class="sec-kicker mono">04 — AGENTES</p>
-    <h2>Quién opera, qué hace</h2>
-    <div class="agents">
-      <article class="card agent">
-        <code class="mono">CURAH</code>
-        <h3>Noticias</h3>
-        <p>Titulares, clima, servicio. Escribe y lee el bloque informativo.</p>
-      </article>
-      <article class="card agent">
-        <code class="mono">MAZCLIN</code>
-        <h3>Continuidad</h3>
-        <p>Valida tono, repetición y reglas. Si falla, no sale al aire.</p>
-      </article>
-      <article class="card agent">
-        <code class="mono">KIRO</code>
-        <h3>Música</h3>
-        <p>Arma playlist y cruces. Mantiene movimiento entre bloques.</p>
-      </article>
-      <article class="card agent">
-        <code class="mono">LINA</code>
-        <h3>Aire comercial</h3>
-        <p>Spots, inventario y disparos de publicidad.</p>
-      </article>
-    </div>
-  </section>
-
-  <section id="dossier">
-    <p class="sec-kicker mono">05 — DOSSIER</p>
-    <h2>Qué es y qué no es</h2>
-    <div class="grid-3">
-      <article class="card">
-        <h3>Es una radio</h3>
-        <p>Señal continua, RDS, parrilla, spots y noticias. Se escucha. No se “explora”.</p>
-      </article>
-      <article class="card">
-        <h3>No es un locutor fake</h3>
-        <p>No hay humano fingiendo. Cada corte nace de un agente con rol y pasa por validador.</p>
-      </article>
-      <article class="card">
-        <h3>No es playlist infinita</h3>
-        <p>Hay edición, rechazo y rewrite. Lo que no cumple regla no llega a antena.</p>
-      </article>
-    </div>
-  </section>
-
-  <div class="ticker-wrap" aria-hidden="true">
-    <div class="ticker">
-      <span>FORMOSA — mínima 12° / máxima 24°</span>
-      <span>NEXAH RADIO — la señal no duerme</span>
-      <span>BANCO FORMOSA — aviso al aire</span>
-      <span>NEXUS COBRANZA — bloque automatizado</span>
-      <span>SIN SILENCIO — buffer activo</span>
-      <span>FORMOSA — mínima 12° / máxima 24°</span>
-      <span>NEXAH RADIO — la señal no duerme</span>
-      <span>BANCO FORMOSA — aviso al aire</span>
-      <span>NEXUS COBRANZA — bloque automatizado</span>
-      <span>SIN SILENCIO — buffer activo</span>
-    </div>
+  <div class="ticker-wrap">
+    <div class="ticker" id="ticker"></div>
   </div>
 
-  <section id="aire">
-    <p class="sec-kicker mono">06 — AIRE COMERCIAL</p>
-    <h2>Inventario en rotación</h2>
-    <div class="spots">
-      <article class="card spot"><small class="mono">SPOT 01</small><h3>Banco Formosa</h3><p>Aviso institucional. 25"</p></article>
-      <article class="card spot"><small class="mono">SPOT 02</small><h3>Nexus cobranza</h3><p>Bloque operativo NEXAH. 20"</p></article>
-      <article class="card spot"><small class="mono">SPOT 03</small><h3>PyMEs NEA</h3><p>Inventario local rotativo. 15"</p></article>
-    </div>
-  </section>
-
   <footer>
-    <span>NEXAH RADIO · La radio está siempre en movimiento</span>
+    <span>NEXAH RADIO · Formosa · La radio está siempre en movimiento</span>
     <span class="mono">SIN AUTOPLAY · PLAY MANUAL</span>
   </footer>
 
-  <aside class="pipeline" aria-label="Pipeline de contenido">
-    <header>
-      <h2 class="mono">PIPELINE</h2>
-      <span class="status mono" id="pipeStatus">PROMPT</span>
-      <button class="pipe-toggle mono" id="pipeToggle" type="button">MIN</button>
-    </header>
-    <div class="rail">
-      <svg viewBox="0 0 296 168" aria-hidden="true">
-        <path d="M18 28h232v56H92v56H18" fill="none" stroke="#1B2938" stroke-width="2"/>
-        <g fill="#0B111A" stroke="#1B2938">
-          <circle cx="18" cy="28" r="6"/><circle cx="92" cy="28" r="6"/>
-          <circle cx="166" cy="28" r="6"/><circle cx="250" cy="28" r="6"/>
-          <circle cx="250" cy="84" r="6"/><circle cx="166" cy="84" r="6"/>
-          <circle cx="92" cy="140" r="6"/><circle cx="18" cy="140" r="6"/>
-        </g>
-        <g fill="#647487" font-size="8" font-family="IBM Plex Mono, monospace">
-          <text x="18" y="16" text-anchor="middle">P</text>
-          <text x="92" y="16" text-anchor="middle">I</text>
-          <text x="166" y="16" text-anchor="middle">V</text>
-          <text x="250" y="16" text-anchor="middle">C</text>
-          <text x="250" y="102" text-anchor="middle">M</text>
-          <text x="166" y="102" text-anchor="middle">PL</text>
-          <text x="92" y="158" text-anchor="middle">ANT</text>
-          <text x="18" y="158" text-anchor="middle">AIR</text>
-        </g>
-      </svg>
-      <div class="token" id="token"><span id="tokenIcon"></span></div>
-    </div>
-    <div class="legend mono"><span>PROMPT</span><span>AIRE</span></div>
-  </aside>
-
+  <script src="data.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
