@@ -1,236 +1,155 @@
 (() => {
-  const STREAM_URL = "https://ice4.somafm.com/groovesalad-128-mp3";
-
-  const rdsItems = [
-    { track: "Formosa despierta", agent: "CURAH", block: "NOTICIAS" },
-    { track: "Corte Banco Formosa", agent: "LINA", block: "SPOT" },
-    { track: "Señal en movimiento", agent: "KIRO", block: "MÚSICA" },
-    { track: "Clima NEA 14 hs", agent: "CURAH", block: "SERVICIO" },
-    { track: "Nexus cobranza — bloque 2", agent: "MAZCLIN", block: "OPERACIÓN" },
-  ];
-
-  const stations = [
-    "PROMPT",
-    "IDEA",
-    "VALIDACIÓN",
-    "COMPOSICIÓN",
-    "MASTER",
-    "PLAYLIST",
-    "ANTENA",
-    "AIRE",
-  ];
-
-  const shapes = ["glyph", "note", "staff", "disc", "wave", "phones"];
-
-  const audio = document.getElementById("stream");
-  const playBtn = document.getElementById("playBtn");
-  const playHero = document.getElementById("playHero");
-  const onair = document.getElementById("onair");
-  const rdsEl = document.getElementById("rdsLine");
-  const nowTrack = document.getElementById("nowTrack");
-  const nowAgent = document.getElementById("nowAgent");
-  const nowBlock = document.getElementById("nowBlock");
-  const edu = document.getElementById("edu");
-  const token = document.getElementById("token");
-  const tokenIcon = document.getElementById("tokenIcon");
-  const pipeStatus = document.getElementById("pipeStatus");
-  const steps = [...document.querySelectorAll(".step")];
-  const canvas = document.getElementById("net");
-
-  let rdsIndex = 0;
+  const D = window.NEXAH;
+  const $ = (id) => document.getElementById(id);
+  const audio = $("stream");
+  const playBtn = $("playBtn");
+  const onair = $("onair");
   let playing = false;
-  let unlocked = false;
 
-  function setRds(i) {
-    const item = rdsItems[i % rdsItems.length];
-    rdsEl.innerHTML = `<b>${item.track}</b> · <em>${item.agent}</em> · ${item.block}`;
-    nowTrack.textContent = item.track;
-    nowAgent.textContent = item.agent;
-    nowBlock.textContent = item.block;
+  function clock() {
+    const t = new Date().toLocaleString("es-AR", {
+      timeZone: "America/Argentina/Buenos_Aires",
+      hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false
+    });
+    $("clock").textContent = t + " · FORMOSA";
+  }
+  clock();
+  setInterval(clock, 1000);
+
+  function setRds(text, src) {
+    $("rdsLine").textContent = text;
+    if (src) $("srcPill").textContent = "FUENTE · " + src;
   }
 
-  setRds(0);
-  setInterval(() => {
-    rdsIndex += 1;
-    setRds(rdsIndex);
-  }, 7000);
-
-  function setPlaying(on) {
-    playing = on;
-    document.body.classList.toggle("is-playing", on);
-    playBtn.classList.toggle("on", on);
-    playBtn.textContent = on ? "PAUSA" : "PLAY";
-    playHero.textContent = on ? "EN REPRODUCCIÓN" : "ESCUCHAR AHORA";
+  function hourPart() {
+    const h = Number(new Date().toLocaleString("en-GB", { timeZone: "America/Argentina/Buenos_Aires", hour: "2-digit", hour12: false }));
+    if (h >= 6 && h < 10) return 0;
+    if (h >= 10 && h < 14) return 1;
+    if (h >= 14 && h < 20) return 2;
+    return 3;
   }
 
-  function markOnAir(ok, label) {
-    onair.classList.toggle("down", !ok);
-    onair.lastElementChild.textContent = label;
+  $("dayparts").innerHTML = D.dayparts.map((p, i) =>
+    '<article class="dp' + (i === hourPart() ? ' active' : '') + '">' +
+    '<b class="mono">' + p.range + ' · ' + p.agent.toUpperCase() + '</b>' +
+    '<h3>' + p.title + '</h3><p>' + p.text + '</p></article>'
+  ).join('');
+
+  $("agentGrid").innerHTML = D.agents.map((a) =>
+    '<article class="agent"><code class="mono">' + a.role.toUpperCase() + '</code>' +
+    '<h3>' + a.name + '</h3><p>' + a.job + '</p><div class="st mono">EN CONSOLA</div></article>'
+  ).join('');
+
+  $("archiveGrid").innerHTML = D.archive.map((a) =>
+    '<article class="card"><div class="thumb"><img src="' + a.img + '" alt="" /></div>' +
+    '<div class="body"><div class="who mono">' + a.agent.toUpperCase() + ' · ' + a.kind + '</div>' +
+    '<h3>' + a.title + '</h3></div></article>'
+  ).join('');
+
+  async function itunesCover(term) {
+    try {
+      const u = 'https://itunes.apple.com/search?term=' + encodeURIComponent(term) + '&entity=song&limit=1';
+      const j = await (await fetch(u)).json();
+      const hit = j.results && j.results[0];
+      if (!hit) return null;
+      return { art: hit.artworkUrl100.replace('100x100', '400x400'), title: hit.trackName + ' — ' + hit.artistName, src: 'ITUNES' };
+    } catch (e) { return null; }
+  }
+
+  async function weather() {
+    try {
+      const u = 'https://api.open-meteo.com/v1/forecast?latitude=-26.1849&longitude=-58.1731&current=temperature_2m,weather_code&timezone=America%2FArgentina%2FBuenos_Aires';
+      const j = await (await fetch(u)).json();
+      const t = Math.round(j.current.temperature_2m);
+      const map = { 0: 'despejado', 1: 'casi despejado', 2: 'parcial', 3: 'nublado', 45: 'niebla', 61: 'lluvia', 80: 'chaparrones', 95: 'tormenta' };
+      const desc = map[j.current.weather_code] || 'en curso';
+      $("wxTemp").textContent = t + '°';
+      $("wxDesc").textContent = 'Formosa · ' + desc;
+      $("nowWx").textContent = 'CLIMA · ' + t + '° ' + desc;
+      return { t: t, desc: desc };
+    } catch (e) { $("wxTemp").textContent = '—'; return null; }
+  }
+
+  async function news() {
+    const feeds = ['https://www.clarin.com/rss/lo-ultimo/', 'https://www.lanacion.com.ar/arc/outboundfeeds/rss/?outputType=xml'];
+    for (var i = 0; i < feeds.length; i++) {
+      try {
+        const u = 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(feeds[i]);
+        const j = await (await fetch(u)).json();
+        if (!j.items || !j.items.length) continue;
+        return j.items.slice(0, 6).map(function (it) {
+          return {
+            title: it.title,
+            lead: String(it.description || '').replace(/<[^>]+>/g, '').slice(0, 140),
+            img: it.thumbnail || (it.enclosure && it.enclosure.link) || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=70',
+            agent: 'Vero', kind: 'NOTICIAS', src: 'RSS'
+          };
+        });
+      } catch (e) {}
+    }
+    return [];
+  }
+
+  function paintNow(item, art, src) {
+    $("nowTitle").textContent = item.title;
+    $("nowLead").textContent = item.lead || item.kind || '';
+    $("nowAgent").textContent = (item.agent || 'Vero').toUpperCase();
+    $("nowBlock").textContent = item.block || item.kind || 'AIRE';
+    if (art) $("nowArt").src = art;
+    $("nowSrc").textContent = 'MOTOR · ' + (src || 'INTERNO');
+    setRds(item.title + ' · ' + item.agent + ' · ' + (item.block || item.kind), src || 'RDS');
+  }
+
+  async function buildQueue() {
+    const covers = [];
+    for (var i = 0; i < 4; i++) {
+      const hit = await itunesCover(D.tracks[i]);
+      covers.push(hit || { art: D.archive[3].img, title: D.tracks[i], src: 'BUFFER' });
+    }
+    const wx = await weather();
+    const newsItems = await news();
+    const queue = [
+      { title: wx ? 'Clima Formosa ' + wx.t + '°' : 'Clima Formosa', agent: 'Vero', kind: 'SERVICIO', art: D.archive[4].img, src: 'OPEN-METEO' },
+      { title: covers[0].title, agent: 'Pablo', kind: 'MUSICA', art: covers[0].art, src: covers[0].src },
+      { title: D.spots[0].title, agent: 'Sofi', kind: 'SPOT', art: D.archive[1].img, src: 'AGENTE' },
+      { title: covers[1].title, agent: 'Pablo', kind: 'MUSICA', art: covers[1].art, src: covers[1].src }
+    ];
+    $("queue").innerHTML = queue.map(function (q) {
+      return '<li><img src="' + q.art + '" alt="" /><div><strong>' + q.title + '</strong><br /><small class="mono">' + q.agent.toUpperCase() + ' · ' + q.kind + '</small></div><small class="mono">' + q.src + '</small></li>';
+    }).join('');
+    $("nowNext").textContent = 'SIGUE · ' + queue[1].title;
+    const feed = newsItems.concat(
+      covers.map(function (c) { return { title: c.title, lead: 'Alta de Pablo via iTunes.', img: c.art, agent: 'Pablo', kind: 'MUSICA', src: c.src }; }),
+      D.spots.map(function (s) { return { title: s.title, lead: 'Pauta ' + s.dur + '. Validado por Diego.', img: D.archive[1].img, agent: 'Sofi', kind: 'SPOT', src: 'AGENTE' }; })
+    ).slice(0, 8);
+    $("feedGrid").innerHTML = feed.map(function (f) {
+      return '<article class="card"><div class="thumb"><img src="' + f.img + '" alt="" /></div><div class="body"><div class="who mono">' + f.agent.toUpperCase() + ' · ' + f.kind + ' · ' + f.src + '</div><h3>' + f.title + '</h3><p>' + (f.lead || '') + '</p></div></article>';
+    }).join('');
+    if (newsItems[0]) paintNow({ title: newsItems[0].title, lead: newsItems[0].lead, agent: 'Vero', block: 'NOTICIAS' }, newsItems[0].img, 'RSS');
+    else if (covers[0]) paintNow({ title: covers[0].title, lead: 'Rotacion musical. Pablo en consola.', agent: 'Pablo', block: 'MUSICA' }, covers[0].art, covers[0].src);
+    const tick = [wx ? 'FORMOSA ' + wx.t + '° ' + wx.desc : 'FORMOSA', 'NEXAH RADIO — la senal no duerme', 'VERO noticias · DIEGO control · PABLO musica · SOFI pauta', queue[0].title, 'SIN SILENCIO — buffer activo'];
+    $("ticker").innerHTML = tick.concat(tick).map(function (t) { return '<span>' + t + '</span>'; }).join('');
+  }
+
+  function markAir(ok, label) {
+    onair.classList.toggle('down', !ok);
+    onair.querySelector('span').textContent = label;
   }
 
   async function togglePlay() {
-    if (!audio.src) audio.src = STREAM_URL;
+    if (!audio.src) audio.src = D.stream;
     try {
-      if (playing) {
-        audio.pause();
-        setPlaying(false);
-        return;
-      }
+      if (playing) { audio.pause(); playing = false; playBtn.textContent = 'PLAY'; playBtn.classList.remove('on'); return; }
       await audio.play();
-      setPlaying(true);
-      markOnAir(true, "EN AIRE");
-      unlocked = true;
-      edu.classList.add("open");
-    } catch (err) {
-      markOnAir(false, "SEÑAL CAÍDA");
-      setPlaying(false);
-      audio.removeAttribute("src");
-    }
+      playing = true; playBtn.textContent = 'PAUSA'; playBtn.classList.add('on'); markAir(true, 'EN AIRE');
+    } catch (e) { markAir(false, 'SENAL CAIDA'); playing = false; playBtn.textContent = 'PLAY'; }
   }
-
-  audio.addEventListener("error", () => {
-    markOnAir(false, "SEÑAL CAÍDA");
-    setPlaying(false);
-  });
-  audio.addEventListener("stalled", () => markOnAir(false, "REINTENTO"));
-  audio.addEventListener("playing", () => markOnAir(true, "EN AIRE"));
-
-  playBtn.addEventListener("click", togglePlay);
-  playHero.addEventListener("click", togglePlay);
-
-  const pipeToggle = document.getElementById("pipeToggle");
-  const pipeBox = document.querySelector(".pipeline");
-  pipeToggle.addEventListener("click", () => {
-    const on = pipeBox.classList.toggle("collapsed");
-    pipeToggle.textContent = on ? "MAX" : "MIN";
-  });
-
-  const ctx = canvas.getContext("2d");
-  const nodes = Array.from({ length: 28 }, () => ({
-    x: Math.random(),
-    y: Math.random(),
-    vx: (Math.random() - 0.5) * 0.00025,
-    vy: (Math.random() - 0.5) * 0.00025,
-  }));
-
-  function resize() {
-    canvas.width = canvas.clientWidth * devicePixelRatio;
-    canvas.height = canvas.clientHeight * devicePixelRatio;
-  }
-  resize();
-  window.addEventListener("resize", resize);
-
-  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  function drawNet() {
-    const w = canvas.width;
-    const h = canvas.height;
-    ctx.clearRect(0, 0, w, h);
-    nodes.forEach((n) => {
-      if (!reduce) {
-        n.x += n.vx;
-        n.y += n.vy;
-        if (n.x < 0 || n.x > 1) n.vx *= -1;
-        if (n.y < 0 || n.y > 1) n.vy *= -1;
-      }
-    });
-    ctx.lineWidth = 1 * devicePixelRatio;
-    for (let i = 0; i < nodes.length; i += 1) {
-      for (let j = i + 1; j < nodes.length; j += 1) {
-        const dx = nodes[i].x - nodes[j].x;
-        const dy = nodes[i].y - nodes[j].y;
-        const d = Math.hypot(dx, dy);
-        if (d < 0.22) {
-          ctx.strokeStyle = `rgba(0,168,255,${(0.22 - d) * 1.4})`;
-          ctx.beginPath();
-          ctx.moveTo(nodes[i].x * w, nodes[i].y * h);
-          ctx.lineTo(nodes[j].x * w, nodes[j].y * h);
-          ctx.stroke();
-        }
-      }
-    }
-    nodes.forEach((n) => {
-      ctx.fillStyle = "#28c4ff";
-      ctx.beginPath();
-      ctx.arc(n.x * w, n.y * h, 2.2 * devicePixelRatio, 0, Math.PI * 2);
-      ctx.fill();
-    });
-    if (!reduce) requestAnimationFrame(drawNet);
-  }
-  drawNet();
-
-  const pts = [
-    [18, 28],
-    [92, 28],
-    [166, 28],
-    [250, 28],
-    [250, 84],
-    [166, 84],
-    [92, 140],
-    [18, 140],
-  ];
-
-  function icon(inner) {
-    return `<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">${inner}</svg>`;
-  }
-  const icons = {
-    glyph: icon('<text x="12" y="16" text-anchor="middle" font-size="13" fill="currentColor">¶</text>'),
-    note: icon('<path d="M10 6v10a3 3 0 1 1-1.5-2.6V8l8-2v8A3 3 0 1 1 15 11V4l-5 2z" fill="currentColor"/>'),
-    staff: icon('<path d="M4 7h16M4 11h16M4 15h16M8 5v14M16 5v14" stroke="currentColor" fill="none" stroke-width="1.6"/>'),
-    disc: icon('<circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="2" fill="currentColor"/>'),
-    wave: icon('<path d="M3 12c2-6 4 6 6 0s4 6 6 0 4 6 6 0" fill="none" stroke="currentColor" stroke-width="1.8"/>'),
-    phones: icon('<path d="M5 13a7 7 0 0 1 14 0v4h-3v-4a4 4 0 0 0-8 0v4H5v-4z" fill="currentColor"/>'),
-  };
-
-  let t = 0;
-  let stage = 0;
-  let rejecting = false;
-  let shape = 0;
-
-  function placeToken(index, lerp) {
-    const a = pts[index];
-    const b = pts[(index + 1) % pts.length];
-    const x = a[0] + (b[0] - a[0]) * lerp;
-    const y = a[1] + (b[1] - a[1]) * lerp;
-    token.style.left = `${(x / 296) * 100}%`;
-    token.style.top = `${(y / 168) * 100}%`;
-  }
-
-  function paintStage(index, reject) {
-    steps.forEach((el, i) => {
-      el.classList.toggle("active", i === index);
-      el.classList.toggle("reject", reject && i === 2);
-    });
-    token.classList.toggle("reject", reject);
-    tokenIcon.innerHTML = icons[shapes[shape % shapes.length]];
-    pipeStatus.textContent = reject ? "RECHAZO → REWRITE" : stations[index];
-  }
-
-  function tickPipe(ts) {
-    if (!tickPipe.t0) tickPipe.t0 = ts;
-    const dt = Math.min(32, ts - tickPipe.t0);
-    tickPipe.t0 = ts;
-
-    if (!reduce) t += dt * 0.00022;
-    if (t >= 1) {
-      t = 0;
-      if (stage === 2 && !rejecting && Math.random() < 0.45) {
-        rejecting = true;
-        stage = 1;
-        shape = 1;
-        paintStage(2, true);
-      } else {
-        rejecting = false;
-        stage = (stage + 1) % 8;
-        shape = Math.min(5, Math.floor((stage / 7) * 5));
-        paintStage(stage, false);
-      }
-    }
-    placeToken(stage, t);
-    requestAnimationFrame(tickPipe);
-  }
-
-  paintStage(0, false);
-  placeToken(0, 0);
-  requestAnimationFrame(tickPipe);
+  playBtn.addEventListener('click', togglePlay);
+  audio.addEventListener('error', function () { markAir(false, 'SENAL CAIDA'); });
+  setRds('NEXAH RADIO · Formosa · la radio esta siempre en movimiento', 'RDS');
+  buildQueue();
+  setInterval(async function () {
+    const hit = await itunesCover(D.tracks[Math.floor(Math.random() * D.tracks.length)]);
+    if (hit) paintNow({ title: hit.title, lead: 'Rotacion Pablo. Motor iTunes.', agent: 'Pablo', block: 'MUSICA' }, hit.art, hit.src);
+  }, 48000);
 })();
