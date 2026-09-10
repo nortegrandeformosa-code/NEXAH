@@ -9,7 +9,7 @@
   document.getElementById("agents").innerHTML = D.agents.map((a) => {
     const on = a.name === onNow.host || a.name === "Diego" || a.name === "Kiro";
     return '<article class="agent' + (on ? " on" : "") + '"><code class="mono">' + a.desk +
-      '</code><h4>' + a.name + '</h4><p>' + a.job + '</p></article>';
+      "</code><h4>" + a.name + "</h4><p>" + a.job + "</p></article>";
   }).join("");
   const queue = [
     { who: "Vero", kind: "SERVICIO", title: "Clima Formosa" },
@@ -19,27 +19,24 @@
     { who: "Diego", kind: "QA", title: "Validación de corte" }
   ];
   document.getElementById("queue").innerHTML = queue.map((q) =>
-    '<li class="card" style="padding:10px"><div class="tag mono">' + q.who + " · " + q.kind +
-    "</div><strong>" + q.title + "</strong></li>"
+    '<div class="q"><small class="mono">' + q.who + " · " + q.kind + "</small><div>" + q.title + "</div></div>"
   ).join("");
   document.getElementById("inv").innerHTML = D.spots.map((s) =>
-    '<article class="card" style="margin-bottom:8px;padding:10px"><div class="tag mono">' + s.dur +
-    "</div><strong>" + s.title + "</strong></article>"
+    '<div class="q"><small class="mono">' + s.dur + "</small><div>" + s.title + "</div></div>"
   ).join("");
   async function weather() {
     try {
-      const u = "https://api.open-meteo.com/v1/forecast?latitude=-26.1849&longitude=-58.1731&current=temperature_2m,weather_code&timezone=America%2FArgentina%2FBuenos_Aires";
+      const u = "https://api.open-meteo.com/v1/forecast?latitude=-26.1849&longitude=-58.1731&current=temperature_2m&timezone=America%2FArgentina%2FBuenos_Aires";
       const j = await (await fetch(u)).json();
       const t = Math.round(j.current.temperature_2m);
-      E.setText("wxBox", "CLIMA · " + t + "° Formosa");
-      log("<b>VERO</b> clima " + t + "° cargado a mesa.");
-    } catch (e) { log("Clima no disponible. Buffer activo."); }
+      E.setText("wxBox", "Clima " + t + "° Formosa");
+      log("<b>VERO</b> clima " + t + "° a mesa.");
+    } catch (e) { log("Clima no disponible."); }
   }
   weather();
-  log("<b>DIEGO</b> reglas de aire cargadas. Tope de reescritura: 3.");
-  log("<b>KIRO</b> rack musical online. Stream 24/7 listo.");
-  log("<b>MAZCLIN</b> supervisor en consola. Sin repetición.");
-  log("Piso operativo. Esperando play del operador.");
+  log("<b>DIEGO</b> reglas cargadas.");
+  log("<b>KIRO</b> rack online.");
+  log("<b>MAZCLIN</b> supervisor en consola.");
   document.getElementById("vol").addEventListener("input", (ev) => {
     document.getElementById("stream").volume = Number(ev.target.value);
   });
