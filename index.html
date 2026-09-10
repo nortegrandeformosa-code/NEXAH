@@ -3,90 +3,69 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>NEXAH Radio — En vivo desde Formosa</title>
-  <meta name="description" content="NEXAH Radio. Señal continua 24/7 desde Formosa. La radio está siempre en movimiento." />
+  <title>NEXAH Radio — En vivo</title>
+  <meta name="description" content="NEXAH Radio. Señal continua desde Formosa." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/site.css" />
 </head>
 <body>
   <audio id="stream" preload="none" crossorigin="anonymous"></audio>
-
-  <header class="top">
-    <a class="brand" href="index.html">
-      <svg width="22" height="22" viewBox="0 0 26 26" aria-hidden="true">
-        <rect x="1" y="1" width="24" height="24" rx="3" fill="#0B111A" stroke="#00A8FF"/>
-        <path d="M7 17V9l5 8 5-8v8" fill="none" stroke="#00A8FF" stroke-width="1.7"/>
-      </svg>
-      NEXAH <b>RADIO</b>
-    </a>
-    <nav class="nav">
-      <a class="active" href="index.html">Aire</a>
+  <header class="bar">
+    <a class="logo" href="index.html">NEXAH <span>RADIO</span></a>
+    <nav>
+      <a class="on" href="index.html">Aire</a>
       <a href="#programacion">Programación</a>
-      <a href="#noticias">Noticias</a>
       <a href="cabina.html">Cabina</a>
     </nav>
-    <div class="live-chip mono"><i></i><span id="airState">LISTA</span></div>
-    <div class="mono" id="clock" style="font-size:12px;color:var(--muted)">—</div>
+    <i class="dot"></i>
+    <span class="mono clock" id="airState">Lista</span>
+    <span class="mono clock" id="clock">—</span>
   </header>
-
-  <main class="wrap">
-    <section class="hero">
+  <section class="stage">
+    <div class="stage-copy">
       <div>
-        <p class="kicker mono">FORMOSA · ARGENTINA · 24/7</p>
-        <h1>La radio está<br>siempre en <em style="color:var(--blue);font-style:normal">movimiento</em>.</h1>
-        <p class="lead">Señal continua. Música, actualidad y servicio desde Formosa. Tocá play y quedate.</p>
-        <div class="hero-actions">
-          <button class="btn btn-play" data-play data-play-label type="button">ESCUCHAR</button>
-          <a class="btn btn-ghost" href="#programacion">Ver programación</a>
+        <p class="eyebrow mono">Formosa · Argentina · 24/7</p>
+        <h1>La radio<br>está siempre<br>en <i>movimiento</i></h1>
+        <p class="sub">Señal continua. Música, ciudad y servicio. Sin cortes. Sin silencio.</p>
+      </div>
+      <div class="cta-row">
+        <button class="play-xl" data-play data-play-label type="button">▶</button>
+        <div class="cta-meta">
+          <b id="pTitle">NEXAH 01</b>
+          <span id="pSub">Tocá play y quedate en la señal</span>
         </div>
       </div>
-      <article class="nowcard">
-        <figure class="art">
-          <img id="nowArt" alt="" src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=format&fit=crop&w=900&q=70" />
-          <span class="badge mono">AHORA · NEXAH 01</span>
-        </figure>
-        <p class="kicker mono" id="showRange">—</p>
-        <h2 id="showName">Sonido NEXAH</h2>
-        <div class="meta mono">
-          <span>CONDUCE · <b id="showHost">Pablo</b></span>
-          <span id="nowTrack">Señal lista</span>
-        </div>
-      </article>
-    </section>
-
-    <section class="strip" id="programacion"></section>
-
-    <section class="sec" id="noticias">
-      <p class="kicker mono">MESA</p>
-      <h3>Al aire y en la ciudad</h3>
-      <div class="grid" id="notes"></div>
-    </section>
-
-    <section class="sec">
-      <p class="kicker mono">MARCAS</p>
-      <h3>En la señal</h3>
-      <div class="grid" id="spots"></div>
-    </section>
-  </main>
-
-  <footer class="wrap">
-    <span>NEXAH Radio · Formosa · La radio está siempre en movimiento</span>
-    <a href="cabina.html">Entrar a cabina</a>
-  </footer>
-
-  <div class="player">
-    <button class="p-btn" data-play data-play-label type="button">▶</button>
-    <div class="p-copy">
-      <strong id="pTitle">NEXAH Radio</strong>
-      <span id="pSub">Formosa · señal continua</span>
     </div>
-    <div class="drop-flag mono" id="dropLine"></div>
-    <canvas class="vu" id="vu" width="220" height="28"></canvas>
+    <div class="stage-art">
+      <img id="nowArt" alt="" src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1400&q=80" />
+      <div class="art-shade"></div>
+      <div class="art-info">
+        <p class="live mono"><span class="dot" style="display:inline-block"></span> Al aire · <span id="showRange">—</span></p>
+        <h2 id="showName">Sonido NEXAH</h2>
+        <p><span id="showHost">Pablo</span> · <span id="nowTrack">Señal lista</span></p>
+      </div>
+    </div>
+  </section>
+  <section class="rail" id="programacion">
+    <div class="rail-label mono">Hoy</div>
+    <div class="shows" id="shows"></div>
+  </section>
+  <section class="block" id="noticias">
+    <p class="eyebrow mono">Mesa</p>
+    <h3>En la ciudad y en la señal</h3>
+    <div class="news" id="notes"></div>
+  </section>
+  <div class="dock">
+    <button class="dock-play" data-play data-play-label type="button">▶</button>
+    <div>
+      <strong id="dockTitle">NEXAH Radio</strong>
+      <span id="dropLine"></span>
+    </div>
+    <canvas id="vu" width="240" height="22"></canvas>
     <input class="vol" id="vol" type="range" min="0" max="1" step="0.01" value="0.9" />
   </div>
-
   <script src="js/data.js"></script>
   <script src="js/engine.js"></script>
   <script src="js/aire.js"></script>
