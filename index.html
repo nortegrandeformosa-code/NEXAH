@@ -3,124 +3,92 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>NEXAH Radio — La radio está siempre en movimiento</title>
-  <meta name="description" content="Radio operada por agentes. Señal 24/7 desde Formosa. Vero, Diego, Pablo y Sofi en consola." />
+  <title>NEXAH Radio — En vivo desde Formosa</title>
+  <meta name="description" content="NEXAH Radio. Señal continua 24/7 desde Formosa. La radio está siempre en movimiento." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/site.css" />
 </head>
 <body>
-  <audio id="stream" preload="none"></audio>
+  <audio id="stream" preload="none" crossorigin="anonymous"></audio>
 
-  <header class="topbar">
-    <a class="brand" href="#aire">
-      <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true">
+  <header class="top">
+    <a class="brand" href="index.html">
+      <svg width="22" height="22" viewBox="0 0 26 26" aria-hidden="true">
         <rect x="1" y="1" width="24" height="24" rx="3" fill="#0B111A" stroke="#00A8FF"/>
         <path d="M7 17V9l5 8 5-8v8" fill="none" stroke="#00A8FF" stroke-width="1.7"/>
       </svg>
-      <span>NEXAH <b>RADIO</b></span>
+      NEXAH <b>RADIO</b>
     </a>
-    <div class="rds" aria-live="polite">
-      <span class="tag">RDS</span>
-      <div id="rdsLine">Cargando señal…</div>
-    </div>
-    <div class="clock mono" id="clock">—</div>
-    <div class="onair mono" id="onair"><i></i><span>EN AIRE</span></div>
-    <button class="play" id="playBtn" type="button">PLAY</button>
+    <nav class="nav">
+      <a class="active" href="index.html">Aire</a>
+      <a href="#programacion">Programación</a>
+      <a href="#noticias">Noticias</a>
+      <a href="cabina.html">Cabina</a>
+    </nav>
+    <div class="live-chip mono"><i></i><span id="airState">LISTA</span></div>
+    <div class="mono" id="clock" style="font-size:12px;color:var(--muted)">—</div>
   </header>
 
-  <nav class="subnav">
-    <a href="#aire">Aire</a>
-    <a href="#feed">Mesa</a>
-    <a href="#parrilla">Parrilla</a>
-    <a href="#archivo">Archivo</a>
-    <a href="#agentes">Piso</a>
-    <span class="src-pill mono" id="srcPill">FUENTE · INICIAL</span>
-  </nav>
-
-  <main>
-    <section class="stage" id="aire">
-      <article class="now">
+  <main class="wrap">
+    <section class="hero">
+      <div>
+        <p class="kicker mono">FORMOSA · ARGENTINA · 24/7</p>
+        <h1>La radio está<br>siempre en <em style="color:var(--blue);font-style:normal">movimiento</em>.</h1>
+        <p class="lead">Señal continua. Música, actualidad y servicio desde Formosa. Tocá play y quedate.</p>
+        <div class="hero-actions">
+          <button class="btn btn-play" data-play data-play-label type="button">ESCUCHAR</button>
+          <a class="btn btn-ghost" href="#programacion">Ver programación</a>
+        </div>
+      </div>
+      <article class="nowcard">
         <figure class="art">
-          <img id="nowArt" alt="" />
-          <figcaption class="mono" id="nowSrc">MOTOR · ITUNES</figcaption>
+          <img id="nowArt" alt="" src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=format&fit=crop&w=900&q=70" />
+          <span class="badge mono">AHORA · NEXAH 01</span>
         </figure>
-        <div class="now-body">
-          <p class="kicker mono">AHORA · <span id="nowAgent">VERO</span> · <span id="nowBlock">NOTICIAS</span></p>
-          <h1 id="nowTitle">Formosa despierta</h1>
-          <p class="lead" id="nowLead">Corte de apertura. Clima, servicio y titulares NEA.</p>
-          <div class="meta mono">
-            <span id="nowNext">SIGUE · —</span>
-            <span id="nowWx">CLIMA · —</span>
-            <span>FORMOSA · AR</span>
-          </div>
+        <p class="kicker mono" id="showRange">—</p>
+        <h2 id="showName">Sonido NEXAH</h2>
+        <div class="meta mono">
+          <span>CONDUCE · <b id="showHost">Pablo</b></span>
+          <span id="nowTrack">Señal lista</span>
         </div>
       </article>
-
-      <aside class="rack">
-        <h2 class="mono">COLA DE AIRE</h2>
-        <ol id="queue"></ol>
-        <div class="wx" id="wxBox">
-          <span class="mono">OPEN-METEO</span>
-          <strong id="wxTemp">—</strong>
-          <em id="wxDesc">Formosa</em>
-        </div>
-      </aside>
     </section>
 
-    <section id="feed">
-      <div class="sec-head">
-        <div>
-          <p class="kicker mono">MESA · FEED VIVO</p>
-          <h2>Lo que entra a antena</h2>
-        </div>
-        <p class="note">Noticias por motor externo. Temas por iTunes. Spots y validación por agentes.</p>
-      </div>
-      <div class="feed" id="feedGrid"></div>
+    <section class="strip" id="programacion"></section>
+
+    <section class="sec" id="noticias">
+      <p class="kicker mono">MESA</p>
+      <h3>Al aire y en la ciudad</h3>
+      <div class="grid" id="notes"></div>
     </section>
 
-    <section id="parrilla">
-      <div class="sec-head">
-        <div>
-          <p class="kicker mono">PARRILLA</p>
-          <h2>El día no tiene huecos</h2>
-        </div>
-      </div>
-      <div class="grid-4" id="dayparts"></div>
-    </section>
-
-    <section id="archivo">
-      <div class="sec-head">
-        <div>
-          <p class="kicker mono">ARCHIVO</p>
-          <h2>Cortes listos</h2>
-        </div>
-      </div>
-      <div class="archive" id="archiveGrid"></div>
-    </section>
-
-    <section id="agentes">
-      <div class="sec-head">
-        <div>
-          <p class="kicker mono">PISO</p>
-          <h2>Quién opera</h2>
-        </div>
-      </div>
-      <div class="agents" id="agentGrid"></div>
+    <section class="sec">
+      <p class="kicker mono">MARCAS</p>
+      <h3>En la señal</h3>
+      <div class="grid" id="spots"></div>
     </section>
   </main>
 
-  <div class="ticker-wrap">
-    <div class="ticker" id="ticker"></div>
-  </div>
-
-  <footer>
-    <span>NEXAH RADIO · Formosa · La radio está siempre en movimiento</span>
-    <span class="mono">SIN AUTOPLAY · PLAY MANUAL</span>
+  <footer class="wrap">
+    <span>NEXAH Radio · Formosa · La radio está siempre en movimiento</span>
+    <a href="cabina.html">Entrar a cabina</a>
   </footer>
 
-  <script src="data.js"></script>
-  <script src="app.js"></script>
+  <div class="player">
+    <button class="p-btn" data-play data-play-label type="button">▶</button>
+    <div class="p-copy">
+      <strong id="pTitle">NEXAH Radio</strong>
+      <span id="pSub">Formosa · señal continua</span>
+    </div>
+    <div class="drop-flag mono" id="dropLine"></div>
+    <canvas class="vu" id="vu" width="220" height="28"></canvas>
+    <input class="vol" id="vol" type="range" min="0" max="1" step="0.01" value="0.9" />
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/aire.js"></script>
 </body>
 </html>
