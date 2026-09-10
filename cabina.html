@@ -3,59 +3,64 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>NEXAH Cabina</title>
+  <title>NEXAH Cabina · Operación</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/site.css" />
 </head>
 <body>
   <audio id="stream" preload="none" crossorigin="anonymous"></audio>
-  <header class="bar">
-    <a class="logo" href="index.html">NEXAH <span>CABINA</span></a>
-    <nav>
+  <header class="top">
+    <a class="brand" href="index.html">
+      <span class="nx">NX</span>
+      <span><b>NEXAH</b><small>CABINA</small></span>
+    </a>
+    <nav class="mono">
       <a href="index.html">Aire público</a>
-      <a class="on" href="cabina.html">Operación</a>
+      <a href="cabina.html">Operación</a>
     </nav>
-    <i class="dot"></i>
-    <span class="mono clock" id="airState">Lista</span>
-    <span class="mono clock" id="clock">—</span>
+    <div class="clockbox">
+      <div id="clock">—</div>
+      <small class="mono">Formosa / Arg</small>
+    </div>
   </header>
   <div class="studio">
     <aside class="col">
-      <p class="eyebrow mono">Piso</p>
+      <p class="k mono">Piso</p>
       <div id="agents"></div>
     </aside>
     <section class="col desk">
-      <p class="eyebrow mono">Control de aire</p>
+      <p class="k mono">Control de aire</p>
       <h1>Cabina</h1>
-      <p class="lead">La señal entra por mesa, pasa por validación y sale a antena. Si el corte no cumple, no sale.</p>
-      <div class="row">
-        <button class="btn-air" data-play data-play-label type="button">Poner al aire</button>
+      <p class="lead">La señal entra por mesa, pasa por validación y sale a antena.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin:16px 0">
+        <button class="air" data-play data-play-label type="button">Poner al aire</button>
         <button class="chip" data-drop="NEXAH Radio. Formosa." type="button">Pisador ID</button>
         <button class="chip" data-drop="La radio está siempre en movimiento." type="button">Slogan</button>
       </div>
-      <p class="mono" style="margin:8px 0 18px;font-size:11px;color:var(--mute)">
+      <p class="mono" style="font-size:11px;color:var(--mut)">
         <span id="showRange">—</span> · <span id="showName">—</span> · <span id="showHost">—</span> · <span id="wxBox">Clima —</span>
       </p>
-      <h2 id="nowTrack" style="font-size:22px;margin-bottom:16px">Cola lista</h2>
-      <p class="eyebrow mono">Bitácora</p>
+      <h2 id="nowTrack" style="margin:14px 0">Cola lista</h2>
+      <p class="k mono">Bitácora</p>
       <div class="log mono" id="log"></div>
     </section>
     <aside class="col">
-      <p class="eyebrow mono">Cola</p>
+      <p class="k mono">Cola</p>
       <div id="queue"></div>
-      <p class="eyebrow mono" style="margin-top:22px">Inventario</p>
+      <p class="k mono" style="margin-top:22px">Inventario</p>
       <div id="inv"></div>
     </aside>
   </div>
   <div class="dock">
-    <button class="dock-play" data-play data-play-label type="button">▶</button>
+    <button class="dplay" data-play data-play-label type="button">▶</button>
     <div>
+      <em class="mono" id="airState">Lista</em>
       <strong>NEXAH 01</strong>
       <span id="dropLine"></span>
     </div>
-    <canvas id="vu" width="240" height="22"></canvas>
+    <canvas id="vu" width="280" height="26"></canvas>
     <input class="vol" id="vol" type="range" min="0" max="1" step="0.01" value="0.85" />
   </div>
   <script src="js/data.js"></script>
