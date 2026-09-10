@@ -7,15 +7,21 @@
     logEl.insertAdjacentHTML("afterbegin", "<div>[" + E.nowAR() + "] " + line + "</div>");
   }
   document.getElementById("agents").innerHTML = D.agents.map((a) => {
-    const on = a.name === onNow.host || a.name === "Diego" || a.name === "Kiro";
-    return '<article class="agent' + (on ? " on" : "") + '"><code class="mono">' + a.desk +
-      "</code><h4>" + a.name + "</h4><p>" + a.job + "</p></article>";
+    const hot = a.name === "Mazclin" || a.name === "Diego";
+    const on = a.name === onNow.host || hot;
+    return '<div class="strip' + (hot ? " hot" : on ? " on" : "") + '">' +
+      '<i class="led"></i><div><small class="mono">' + a.desk + "</small><h4>" + a.name +
+      "</h4><p>" + a.job + "</p></div><div class=\"fader\"><i></i></div></div>";
+  }).join("");
+  document.getElementById("faders").innerHTML = Array.from({ length: 18 }, (_, i) => {
+    const h = 18 + ((i * 17) % 82);
+    return '<div class="bar"><b style="height:' + h + '%"></b></div>';
   }).join("");
   const queue = [
     { who: "Vero", kind: "SERVICIO", title: "Clima Formosa" },
     { who: "Pablo", kind: "MÚSICA", title: D.tracks[0] },
     { who: "Sofi", kind: "SPOT", title: D.spots[0].title },
-    { who: "Pablo", kind: "MÚSICA", title: D.tracks[2] },
+    { who: "Lina", kind: "VOZ", title: "Pisador ID" },
     { who: "Diego", kind: "QA", title: "Validación de corte" }
   ];
   document.getElementById("queue").innerHTML = queue.map((q) =>
@@ -34,10 +40,12 @@
     } catch (e) { log("Clima no disponible."); }
   }
   weather();
-  log("<b>DIEGO</b> reglas cargadas.");
-  log("<b>KIRO</b> rack online.");
-  log("<b>MAZCLIN</b> supervisor en consola.");
+  log("<b>MAZCLIN</b> supervisor en vidriera. Calidad armada.");
+  log("<b>DIEGO</b> reglas cargadas. Sin pase, no hay aire.");
+  log("<b>KIRO</b> rack 24/7 online.");
   document.getElementById("vol").addEventListener("input", (ev) => {
     document.getElementById("stream").volume = Number(ev.target.value);
   });
+  const cam = document.getElementById("studioCam");
+  if (cam) cam.play().catch(() => {});
 })();
