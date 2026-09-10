@@ -49,7 +49,17 @@
       <div class="master">
         <p class="k mono">Master · Mesa 01</p>
         <h1>Operación</h1>
-        <p class="lead" style="margin-top:10px">Lo que no valida Diego no sale. Mazclin supervisa tono, frescura y repetición.</p>
+        <p class="lead" style="margin-top:10px">Monitoreo PGM en vivo. Lo que no valida Diego no sale.</p>
+        <div class="mon">
+          <div class="mon-top mono">
+            <span>PGM</span>
+            <span id="lvlDb">— dB</span>
+            <span id="peakDb">— PK</span>
+            <i id="clipLed" class="clip"></i>
+          </div>
+          <canvas id="vuMaster" width="640" height="88"></canvas>
+          <canvas id="vuScope" width="640" height="48"></canvas>
+        </div>
         <div class="vu-row" id="faders"></div>
         <div class="ops">
           <button class="air" data-play data-play-label type="button">Poner al aire</button>

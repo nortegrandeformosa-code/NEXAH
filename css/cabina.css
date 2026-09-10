@@ -25,3 +25,11 @@
 .bar b { display: block; width: 100%; background: linear-gradient(#ff2e91, #62f6ff); }
 .ops { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0; }
 .side { padding: 16px 16px 90px; border-left: 1px solid #ffffff12; overflow: auto; }
+.mon { margin: 16px 0 8px; }
+.mon-top { display: flex; align-items: center; gap: 12px; font-size: 10px; color: var(--mut); margin-bottom: 8px; }
+.mon-top span:nth-child(2), .mon-top span:nth-child(3) { color: var(--neon); }
+#vuMaster, #vuScope { width: 100%; display: block; background: #07060c; border: 1px solid #ffffff12; }
+#vuScope { margin-top: 6px; }
+.clip { width: 8px; height: 8px; border-radius: 50%; background: #3a3548; margin-left: auto; }
+.clip.on { background: #ff2e91; box-shadow: 0 0 8px #ff2e91; }
+body.is-live .stamp b { background: #ff2e91; }
