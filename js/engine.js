@@ -1,16 +1,24 @@
 (() => {
   const D = window.NEXAH;
+  const PINCH_MIN = D.pinchMinMs || 5 * 60 * 1000;
+  const PINCH_MAX = D.pinchMaxMs || 9 * 60 * 1000;
+
   const engine = {
     playing: false,
     ducked: false,
+    busy: false,
     ctx: null,
     srcNode: null,
-    gain: null,
+    musicGain: null,
+    voiceGain: null,
+    master: null,
     analyser: null,
     timer: null,
     lastPisa: 0,
+    nextPisaAt: 0,
     peak: 0,
-    peakAt: 0
+    peakAt: 0,
+    layer: "music"
   };
 
   function $(id) { return document.getElementById(id); }
@@ -37,27 +45,40 @@
     if (el) el.textContent = text;
   }
 
+  function gapMs() {
+    return PINCH_MIN + Math.floor(Math.random() * (PINCH_MAX - PINCH_MIN + 1));
+  }
+
   function bootAudio() {
     const audio = $("stream");
     if (!audio || engine.ctx) return;
     const AC = window.AudioContext || window.webkitAudioContext;
     engine.ctx = new AC();
     engine.srcNode = engine.ctx.createMediaElementSource(audio);
-    engine.gain = engine.ctx.createGain();
+    engine.musicGain = engine.ctx.createGain();
+    engine.voiceGain = engine.ctx.createGain();
+    engine.master = engine.ctx.createGain();
     engine.analyser = engine.ctx.createAnalyser();
     engine.analyser.fftSize = 256;
     engine.analyser.smoothingTimeConstant = 0.72;
-    engine.srcNode.connect(engine.gain);
-    engine.gain.connect(engine.analyser);
+    engine.srcNode.connect(engine.musicGain);
+    engine.musicGain.connect(engine.master);
+    engine.voiceGain.connect(engine.master);
+    engine.master.connect(engine.analyser);
     engine.analyser.connect(engine.ctx.destination);
-    engine.gain.gain.value = 1;
+    engine.musicGain.gain.value = 1;
+    engine.voiceGain.gain.value = 1;
+    engine.master.gain.value = 1;
   }
 
   function duck(on) {
-    if (!engine.gain) return;
+    if (!engine.musicGain) return;
     engine.ducked = on;
-    engine.gain.gain.cancelScheduledValues(engine.ctx.currentTime);
-    engine.gain.gain.linearRampToValueAtTime(on ? 0.18 : 1, engine.ctx.currentTime + 0.18);
+    engine.layer = on ? "voice" : "music";
+    const t = engine.ctx.currentTime;
+    const ms = (D.duckMs || 180) / 1000;
+    engine.musicGain.gain.cancelScheduledValues(t);
+    engine.musicGain.gain.linearRampToValueAtTime(on ? (D.duckLevel || 0.16) : 1, t + ms);
   }
 
   function speak(text) {
@@ -76,10 +97,35 @@
     });
   }
 
+  function armNextPinch(fromNow) {
+    clearTimeout(engine.timer);
+    const wait = fromNow == null ? gapMs() : fromNow;
+    engine.nextPisaAt = Date.now() + wait;
+    engine.timer = setTimeout(() => {
+      if (!engine.playing) return;
+      pickAndFire();
+    }, wait);
+  }
+
+  function pickAndFire() {
+    if (!engine.playing || engine.busy) {
+      armNextPinch();
+      return;
+    }
+    const roll = Math.random();
+    if (roll < 0.78) firePisador();
+    else {
+      const s = D.spots[Math.floor(Math.random() * D.spots.length)];
+      firePisador(s.line);
+    }
+  }
+
   async function firePisador(custom) {
     if (!engine.playing) return;
-    const line = custom || D.pisadores[Math.floor(Math.random() * D.pisadores.length)];
+    if (engine.busy) return;
+    engine.busy = true;
     engine.lastPisa = Date.now();
+    const line = custom || D.pisadores[Math.floor(Math.random() * D.pisadores.length)];
     document.body.classList.add("on-drop");
     setText("dropLine", line);
     duck(true);
@@ -87,20 +133,9 @@
     duck(false);
     document.body.classList.remove("on-drop");
     setText("dropLine", "");
-  }
-
-  function scheduleDrops() {
-    clearInterval(engine.timer);
-    engine.timer = setInterval(() => {
-      if (!engine.playing) return;
-      if (Date.now() - engine.lastPisa < 90000) return;
-      const roll = Math.random();
-      if (roll < 0.55) firePisador();
-      else if (roll < 0.72) {
-        const s = D.spots[Math.floor(Math.random() * D.spots.length)];
-        firePisador(s.line);
-      }
-    }, 28000);
+    engine.busy = false;
+    engine.layer = "music";
+    armNextPinch();
   }
 
   async function play() {
@@ -115,8 +150,11 @@
       document.body.classList.add("is-live");
       document.querySelectorAll("[data-play-label]").forEach((b) => { b.textContent = "PAUSA"; });
       setText("airState", "EN AIRE");
-      scheduleDrops();
-      if (Date.now() - engine.lastPisa > 4000) setTimeout(() => firePisador(D.pisadores[0]), 1200);
+      if (Date.now() - engine.lastPisa > PINCH_MIN) {
+        setTimeout(() => firePisador(D.pisadores[0]), 1600);
+      } else {
+        armNextPinch();
+      }
     } catch (err) {
       audio.src = D.streamFallback;
       try {
@@ -124,7 +162,11 @@
         engine.playing = true;
         document.body.classList.add("is-live");
         setText("airState", "EN AIRE");
-        scheduleDrops();
+        if (Date.now() - engine.lastPisa > PINCH_MIN) {
+          setTimeout(() => firePisador(D.pisadores[0]), 1600);
+        } else {
+          armNextPinch();
+        }
       } catch (e2) {
         setText("airState", "SEÑAL CAÍDA");
         engine.playing = false;
@@ -136,9 +178,16 @@
     const audio = $("stream");
     if (audio) audio.pause();
     engine.playing = false;
-    document.body.classList.remove("is-live");
+    engine.busy = false;
+    clearTimeout(engine.timer);
+    document.body.classList.remove("is-live", "on-drop");
     document.querySelectorAll("[data-play-label]").forEach((b) => { b.textContent = "ESCUCHAR"; });
     setText("airState", "LISTA");
+    setText("dropLine", "");
+    if (engine.musicGain && engine.ctx) {
+      engine.musicGain.gain.cancelScheduledValues(engine.ctx.currentTime);
+      engine.musicGain.gain.value = 1;
+    }
     speechSynthesis && speechSynthesis.cancel();
   }
 
@@ -217,7 +266,9 @@
     requestAnimationFrame(clockLoop);
   }
 
-  window.NexahEngine = { play, pause, toggle, firePisador, currentShow, nowAR, hourAR, setText, engine };
+  window.NexahEngine = {
+    play, pause, toggle, firePisador, currentShow, nowAR, hourAR, setText, engine
+  };
 
   document.addEventListener("click", (e) => {
     const btn = e.target.closest("[data-play]");

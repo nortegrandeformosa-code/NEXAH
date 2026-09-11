@@ -18,11 +18,11 @@
     return '<div class="bar"><b style="height:' + h + '%"></b></div>';
   }).join("");
   const queue = [
-    { who: "Vero", kind: "SERVICIO", title: "Clima Formosa" },
+    { who: "Kiro", kind: "CAMA", title: D.streamLabel || "Alt / Rock / House" },
+    { who: "Lina", kind: "VOZ", title: "Pisador · ciclo 5–9 min" },
     { who: "Pablo", kind: "MÚSICA", title: D.tracks[0] },
     { who: "Sofi", kind: "SPOT", title: D.spots[0].title },
-    { who: "Lina", kind: "VOZ", title: "Pisador ID" },
-    { who: "Diego", kind: "QA", title: "Validación de corte" }
+    { who: "Diego", kind: "QA", title: "Un pinchador a la vez" }
   ];
   document.getElementById("queue").innerHTML = queue.map((q) =>
     '<div class="q"><small class="mono">' + q.who + " · " + q.kind + "</small><div>" + q.title + "</div></div>"
@@ -40,9 +40,10 @@
     } catch (e) { log("Clima no disponible."); }
   }
   weather();
+  log("<b>KIRO</b> cama SomaFM alt/rock/house. Música no se corta.");
+  log("<b>LINA</b> capa voz sobre música. Ducking, no reemplazo.");
+  log("<b>DIEGO</b> pinches exclusivos. Próximo espera 5 a 9 min.");
   log("<b>MAZCLIN</b> supervisor en vidriera. Calidad armada.");
-  log("<b>DIEGO</b> reglas cargadas. Sin pase, no hay aire.");
-  log("<b>KIRO</b> rack 24/7 online.");
   document.getElementById("vol").addEventListener("input", (ev) => {
     document.getElementById("stream").volume = Number(ev.target.value);
   });
