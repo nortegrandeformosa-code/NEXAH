@@ -9,19 +9,20 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/site.css" />
+  <link rel="icon" href="partners/nexah.svg" type="image/svg+xml" />
 </head>
 <body>
   <audio id="stream" preload="none" crossorigin="anonymous"></audio>
   <header class="top">
     <a class="brand" href="index.html">
-      <span class="nx">NX</span>
+      <img class="nx-mark" src="partners/nexah.svg" width="42" height="42" alt="NX" />
       <span><b>NEXAH</b><small>RADIO</small></span>
     </a>
     <nav class="mono">
       <a href="#senal">Escuchar</a>
       <a href="#visual">Radio visual</a>
       <a href="#senal">La señal</a>
-      <a href="#banco">Banco Formosa</a>
+      <a href="#marcas">Marcas</a>
       <a href="cabina.html">Cabina</a>
     </nav>
     <div class="clockbox">
@@ -81,12 +82,25 @@
     <h3>No es una playlist.<br><em>Es un recorrido.</em></h3>
     <div class="cols" id="shows"></div>
   </section>
-  <section class="sec banco" id="banco">
-    <p class="k mono">Acompaña esta señal</p>
-    <h3>Banco Formosa</h3>
-    <p class="lead">Banco Formosa acompaña esta edición de NEXAH Radio.</p>
-    <p><a href="https://www.bancoformosa.com.ar/Fondos-Comunes-de-Inversion-731.note.aspx" target="_blank" rel="noopener">Información oficial · FCI</a></p>
-    <p><a href="https://www.bancoformosa.com.ar/Banco-Formosa-te-premia-con-Todo-suma-791.note.aspx" target="_blank" rel="noopener">Información oficial · Todo Suma</a></p>
+  <section class="sec marcas" id="marcas">
+    <p class="k mono">Acompañan esta señal</p>
+    <h3>Marcas en pista.</h3>
+    <p class="lead">Tira institucional. Tres lockups, mismo peso, fondo oscuro. Banco Formosa en placa blanca porque el original es azul.</p>
+    <div class="logo-row">
+      <a class="logo-cell banco-cell" href="https://www.bancoformosa.com.ar/" target="_blank" rel="noopener">
+        <img src="https://www.bancoformosa.com.ar/assets/images/layout/logo.svg" alt="Banco Formosa" />
+      </a>
+      <a class="logo-cell linar" href="#marcas">
+        <img src="partners/linar.svg" alt="Linar Ferretería" />
+      </a>
+      <a class="logo-cell" href="#marcas">
+        <img src="partners/norte-grande.svg" alt="Norte Grande" />
+      </a>
+    </div>
+    <p class="marca-links">
+      <a href="https://www.bancoformosa.com.ar/Fondos-Comunes-de-Inversion-731.note.aspx" target="_blank" rel="noopener">FCI Banco Formosa</a>
+      <a href="https://www.bancoformosa.com.ar/Banco-Formosa-te-premia-con-Todo-suma-791.note.aspx" target="_blank" rel="noopener">Todo Suma</a>
+    </p>
   </section>
   <section class="sec" id="nexah">
     <p class="k mono">02 / NEXAH</p>
